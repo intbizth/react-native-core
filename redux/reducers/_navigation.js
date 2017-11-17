@@ -1,3 +1,4 @@
+import { NavigationActions } from 'react-navigation';
 import { NAVIGATE_TO_ROOT } from '../constants';
 
 export function navigateToRoot() {
@@ -13,7 +14,7 @@ function getCurrentRoute(state) {
     return state;
 }
 
-export function createNavigatorReducer(RootNavigator, NavigationActions) {
+export function createNavigatorReducer(RootNavigator) {
     return (state = {}, action) => {
         let newState;
         switch (action.type) {

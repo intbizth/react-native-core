@@ -1,0 +1,24 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "airbnb",
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "plugins": [
+    "react",
+    "react-native"
+  ],
+  "rules": {
+    "indent": ["error", 4, {"SwitchCase": 1}],
+    "no-console": 0, // react native no need its.
+    "import/prefer-default-export": 0, // no need its
+    "react/jsx-filename-extension": [1, { "extensions": [".js"] }],
+    "react/jsx-indent": [1, 4],
+    "react/jsx-indent-props": [1, 4]
+  }
+}

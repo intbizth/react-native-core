@@ -1,3 +1,4 @@
+import { NavigationActions } from 'react-navigation';
 import extend from 'lodash/extend';
 import {call, put, take, fork} from 'redux-saga/effects';
 import { showLoadingOverlayAndDisableBack, showLoadingOverlay, hideLoadingOverlay } from '../../redux/actions';
@@ -24,13 +25,13 @@ export const doRequest = function*(entityActions, apiFn, userOptions = {}) {
     ];
 
     if (options.cancelOnBack) {
-        actionsWatching.push(NavigationActions.back().type);
+        actionsWatching.push(NavigationActions.BACK);
     }
 
     const action = yield take(actionsWatching);
 
     // IF WE NEED FORCE CANCEL
-    if (action.type === entityActions.dismiss().type || action.type === NavigationActions.back().type) {
+    if (action.type === entityActions.dismiss().type || action.type === NavigationActions.BACK) {
         task.cancel();
         yield put(hideLoadingOverlay());
     }
