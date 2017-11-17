@@ -1,4 +1,4 @@
-export const reducer = (entity, key) => {
+export default (entity, key) => {
     return (state = {}, action) => {
         switch (action.type) {
             case entity.SUCCESS:
