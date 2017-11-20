@@ -1,3 +1,5 @@
+import { ACTION_PREFIX } from '../../constants';
+
 const SUBMIT = 'SUBMIT';
 const SUBMIT_VALIDATION_FAILED = 'SUBMIT_VALIDATION_FAILED';
 const SUBMIT_FAILURE = 'SUBMIT_FAILURE';
@@ -5,7 +7,7 @@ const SUBMIT_SUCCESS = 'SUBMIT_SUCCESS';
 
 export function createSubmitTypes(base) {
     return [SUBMIT, SUBMIT_VALIDATION_FAILED, SUBMIT_SUCCESS, SUBMIT_FAILURE].reduce((acc, type) => {
-        acc[type] = `${base}_${type}`;
+        acc[type] = `${ACTION_PREFIX}${base}_${type}`;
         return acc
     }, {});
 }

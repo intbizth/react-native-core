@@ -11,13 +11,11 @@ export function* watchAlertChannel() {
     }
 }
 
-export function* watchRequestApiFailure() {
+export function* watchRequestApiFailure(text = 'Something wrong! during request to server.') {
     yield takeLatest(action => /^(.*)_FAILURE$/.test(action.type), function ({errors, __meta__}) {
         if (__meta__.disabledDisplayGlobalError) {
             return;
         }
-
-        let text = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
 
         // eslint-disable-next-line no-undef
         if (__DEV__ && errors.response) {

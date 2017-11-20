@@ -1,3 +1,5 @@
+import { ACTION_PREFIX } from '../../constants';
+
 const REQUEST = 'REQUEST';
 const SUCCESS = 'SUCCESS';
 const FAILURE = 'FAILURE';
@@ -6,7 +8,7 @@ const DISMISS = 'DISMISS';
 
 export function createRequestTypes(base) {
     return [REQUEST, SUCCESS, FAILURE, DISMISS].reduce((acc, type) => {
-        acc[type] = `${base}_${type}`;
+        acc[type] = `${ACTION_PREFIX}${base}_${type}`;
         return acc
     }, {})
 }

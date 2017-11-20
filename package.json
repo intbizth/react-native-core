@@ -1,7 +1,7 @@
 {
   "name": "react-native-core",
   "version": "0.0.1",
-  "description": "",
+  "description": "core feature for react native project",
   "main": "index.js",
   "dependencies": {
     "lodash": "^4.17.4",

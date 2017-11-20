@@ -1,0 +1,10 @@
+import { ACTION_PREFIX } from '../../../constants';
+
+export const SHOW_LOADING_OVERLAY = `${ACTION_PREFIX}/SHOW_LOADING_OVERLAY`;
+export const HIDE_LOADING_OVERLAY = `${ACTION_PREFIX}/HIDE_LOADING_OVERLAY`;
+
+export const CHANGE_LOCALE = `${ACTION_PREFIX}/CHANGE_LOCALE`;
+
+export const NAVIGATE_TO_ROOT = `${ACTION_PREFIX}/NAVIGATE_TO_ROOT`;
+
+export const REDUCER_KEY = 'rn_core_common';

@@ -1,13 +1,18 @@
-import { AbstractRequestAction } from '../request/action';
+import {AbstractRequestAction, createRequestTypes} from '../request/action';
+import {ACTION_PREFIX} from '../../constants';
+
 
 const REFRESH = 'REFRESH';
 const LOADMORE = 'LOADMORE';
 
 export function createPaginateTypes(base) {
-    return [REFRESH, LOADMORE].reduce((acc, type) => {
-        acc[type] = `${base}_${type}`;
-        return acc
-    }, {});
+    return [
+        ...createRequestTypes(base),
+        ...([REFRESH, LOADMORE].reduce((acc, type) => {
+            acc[type] = `${ACTION_PREFIX}${base}_${type}`;
+            return acc
+        }, {}))
+    ];
 }
 
 
