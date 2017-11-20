@@ -1,7 +1,11 @@
 import { NavigationActions } from 'react-navigation';
 import extend from 'lodash/extend';
-import {call, put, take, fork} from 'redux-saga/effects';
-import { showLoadingOverlayAndDisableBack, showLoadingOverlay, hideLoadingOverlay } from '../../redux/actions';
+import { call, put, take, fork } from 'redux-saga/effects';
+import {
+    showLoadingOverlayAndDisableBack,
+    showLoadingOverlay,
+    hideLoadingOverlay
+} from '../../features/common/redux/actions';
 
 export const doRequest = function*(entityActions, apiFn, userOptions = {}) {
     const options = extend({
