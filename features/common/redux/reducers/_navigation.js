@@ -1,10 +1,9 @@
 import { NavigationActions } from 'react-navigation';
 import { NAVIGATE_TO_ROOT } from '../constants';
 
-export function navigateToRoot(routeName) {
+export function navigateToRoot() {
     return {
         type: NAVIGATE_TO_ROOT,
-        routeName
     };
 }
 
@@ -22,9 +21,8 @@ export function createNavigatorReducer(RootNavigator) {
             //https://github.com/react-community/react-navigation/issues/1493
             case NAVIGATE_TO_ROOT:
                 newState = RootNavigator.router.getStateForAction(NavigationActions.init());
-                if (action.routeName) {
-                    newState.routes[0].index = RootNavigator.indexOf(action.routeName);
-                }
+                newState.currentRoute = getCurrentRoute(newState).routeName;
+                // newState.routes[0].index = RootNavigator.indexOf(action.routeName);
                 return {
                     ...state,
                     nav: newState
