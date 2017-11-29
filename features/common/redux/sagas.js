@@ -28,7 +28,8 @@ export function* watchRequestApiFailure(text = 'Something wrong! during request 
         Toast.show({
             text,
             position: 'bottom',
-            buttonText: 'Close'
+            buttonText: 'Close',
+            duration: 3000
         })
     });
 }
