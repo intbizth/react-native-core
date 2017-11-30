@@ -15,16 +15,17 @@ class InfinityScrollList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            onEndReachedCalledDuringMomentum: true, // IOS Buggy. see: https://github.com/facebook/react-native/issues/14015
+            notAllowLoadingMore: false, // IOS Buggy. see: https://github.com/facebook/react-native/issues/14015
             viewableKeys: []
         };
 
+        this._handleLoadMore = this._handleLoadMore.bind(this);
         this._onViewableItemsChanged = this._onViewableItemsChanged.bind(this);
         this._renderItem = this._renderItem.bind(this);
 
         // https://stackoverflow.com/questions/24306290/lodash-debounce-not-working-in-anonymous-function
         this.__onViewableItemsChanged = debounce(this.__onViewableItemsChanged.bind(this), 500);
-        this._handleLoadMore = this._handleLoadMore.bind(this);
+        this._allowLoadingMore = debounce(this._allowLoadingMore.bind(this), 500);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -32,25 +33,26 @@ class InfinityScrollList extends React.Component {
             return;
         }
 
-        // Prevent call twice loadmore when before calling loadmore success
-        setTimeout(() => {
-            if (!this._ref) {
-                return;
-            }
-
-            this.setState({
-                onEndReachedCalledDuringMomentum: false
-            })
-        }, 1500)
+        this._allowLoadingMore();
     }
 
-    _handleLoadMore() {
-        if (this.state.onEndReachedCalledDuringMomentum || this.props.loadingMore || this.props.refreshing) {
+    _allowLoadingMore() {
+        if (!this._ref) {
             return;
         }
 
         this.setState({
-            onEndReachedCalledDuringMomentum: true
+            notAllowLoadingMore: false
+        })
+    }
+
+    _handleLoadMore() {
+        if (this.state.notAllowLoadingMore || this.props.refreshing) {
+            return;
+        }
+
+        this.setState({
+            notAllowLoadingMore: true
         });
         this.props.onLoadMore();
     }
@@ -97,7 +99,6 @@ class InfinityScrollList extends React.Component {
                     ListFooterComponent={this.props.loadingMore && <Spinner color="black" />}
                     renderItem={this._renderItem}
                     onViewableItemsChanged={this._onViewableItemsChanged}
-                    onMomentumScrollBegin={() => this.setState({onEndReachedCalledDuringMomentum: false})}
                 />
             </List>
         )
