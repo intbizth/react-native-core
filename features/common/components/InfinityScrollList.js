@@ -25,7 +25,7 @@ class InfinityScrollList extends React.Component {
 
         // https://stackoverflow.com/questions/24306290/lodash-debounce-not-working-in-anonymous-function
         this.__onViewableItemsChanged = debounce(this.__onViewableItemsChanged.bind(this), 500);
-        this._allowLoadingMore = debounce(this._allowLoadingMore.bind(this), 500);
+        this._allowLoadingMore = debounce(this._allowLoadingMore.bind(this), 1000);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -91,7 +91,7 @@ class InfinityScrollList extends React.Component {
         return (
             <List ref={(ref) => this._ref = ref}>
                 <FlatList
-                    onEndReachedThreshold={1}
+                    onEndReachedThreshold={0.8}
                     keyExtractor={(item) => item.id}
                     {...this.props}
                     onEndReached={this._handleLoadMore}
