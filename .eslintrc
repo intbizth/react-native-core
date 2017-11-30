@@ -16,6 +16,7 @@
   "rules": {
     "indent": ["error", 4, {"SwitchCase": 1}],
     "no-console": 0, // react native no need its.
+    "react/forbid-prop-types": 0, // sometime we need to use object and array PropTypes
     "import/prefer-default-export": 0, // no need its
     "react/jsx-filename-extension": [1, { "extensions": [".js"] }],
     "react/jsx-indent": [1, 4],

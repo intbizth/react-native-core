@@ -8,12 +8,8 @@ import debounce from "lodash/debounce";
 
 class InfinityScrollList extends React.Component {
     static propTypes = {
-        data: PropTypes.array.isRequired,
-        renderItem: PropTypes.func.isRequired,
+        ...FlatList.propTypes,
         onLoadMore: PropTypes.func.isRequired,
-        loadingMore: PropTypes.bool.isRequired,
-        onRefresh: PropTypes.func.isRequired,
-        refreshing: PropTypes.bool.isRequired,
     };
 
     constructor(props) {
@@ -23,21 +19,40 @@ class InfinityScrollList extends React.Component {
             viewableKeys: []
         };
 
-        this._handleLoadMore = this._handleLoadMore.bind(this);
         this._onViewableItemsChanged = this._onViewableItemsChanged.bind(this);
         this._renderItem = this._renderItem.bind(this);
 
         // https://stackoverflow.com/questions/24306290/lodash-debounce-not-working-in-anonymous-function
         this.__onViewableItemsChanged = debounce(this.__onViewableItemsChanged.bind(this), 500);
+        this._handleLoadMore = this._handleLoadMore.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.loadingMore) {
+            return;
+        }
+
+        // Prevent call twice loadmore when before calling loadmore success
+        setTimeout(() => {
+            if (!this._ref) {
+                return;
+            }
+
+            this.setState({
+                onEndReachedCalledDuringMomentum: false
+            })
+        }, 1500)
     }
 
     _handleLoadMore() {
-        const {refreshing, loadingMore, onLoadMore} = this.props;
-        if (this.state.onEndReachedCalledDuringMomentum || loadingMore || refreshing) {
-            return false;
+        if (this.state.onEndReachedCalledDuringMomentum || this.props.loadingMore || this.props.refreshing) {
+            return;
         }
 
-        onLoadMore();
+        this.setState({
+            onEndReachedCalledDuringMomentum: true
+        });
+        this.props.onLoadMore();
     }
 
     _renderItem(e) {
@@ -71,21 +86,18 @@ class InfinityScrollList extends React.Component {
     }
 
     render() {
-        const {refreshing, loadingMore, data, onRefresh} = this.props;
         return (
             <List ref={(ref) => this._ref = ref}>
                 <FlatList
-                    data={data}
-                    extraData={this.state}
+                    onEndReachedThreshold={1}
                     keyExtractor={(item) => item.id}
-                    renderItem={this._renderItem}
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
+                    {...this.props}
                     onEndReached={this._handleLoadMore}
-                    onEndReachedThreshold={0}
+                    extraData={this.state}
+                    ListFooterComponent={this.props.loadingMore && <Spinner color="black" />}
+                    renderItem={this._renderItem}
                     onViewableItemsChanged={this._onViewableItemsChanged}
                     onMomentumScrollBegin={() => this.setState({onEndReachedCalledDuringMomentum: false})}
-                    ListFooterComponent={loadingMore && <Spinner color="black" />}
                 />
             </List>
         )
