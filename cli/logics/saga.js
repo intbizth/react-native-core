@@ -74,7 +74,7 @@ export const ${sagaName} = function*() {
 
     refactor.updateFile(targetPath, ast => [].concat(
         refactor.addImportFrom(ast, `redux-saga/effects`, '', sagasImport),
-        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${options.type}/actions`, '', [_getActionSaga(options.type)]),
+        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${options.type}/action`, '', [_getActionSaga(options.type)]),
         refactor.addImportFrom(ast, `../constants`, '', [constantName]),
         refactor.addImportFrom(ast, `../actions`, '', [actionName]),
     ));
