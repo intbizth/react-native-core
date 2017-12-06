@@ -38,13 +38,14 @@ function getFeatureFolder(feature) {
         return featureDir[feature];
     }
 
-    const featureFolder = `${getProjectRoot()}src/features/${feature}`;
+    let featureFolder = `${getProjectRoot()}src/features/${feature}`;
     if (fs.existsSync(featureFolder)) {
         featureDir[feature] = featureFolder;
-        return
+        return featureFolder;
     }
 
-    return `${getProjectRoot()}features/${feature}`;
+    featureDir[feature] = featureFolder = `${getProjectRoot()}features/${feature}`;
+    return featureFolder;
 }
 
 function getReduxFolder(feature) {
