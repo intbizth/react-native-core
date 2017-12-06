@@ -35,8 +35,15 @@ function make(feature, name, options) {
 =====================================
 `
     );
-    entry.linkSaga(feature, name, options, sagaName);
-    entry.linkReducer(feature, name, options, reducerName);
+
+    if (sagaName) {
+        entry.linkSaga(feature, name, options, sagaName);
+    }
+
+    if (reducerName) {
+        entry.linkSaga(feature, name, options, sagaName);
+    }
+
     //refactor.flush();
 
     refactor.info('Complete.. ;))');

@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const shell = require('shelljs');
@@ -30,8 +31,20 @@ function success(msg) {
     console.log(colors.green(msg));
 }
 
+
+let featureDir = {};
 function getFeatureFolder(feature) {
-    return `${getProjectRoot()}src/features/${feature}`;
+    if (featureDir[feature]) {
+        return featureDir[feature];
+    }
+
+    const featureFolder = `${getProjectRoot()}src/features/${feature}`;
+    if (fs.existsSync(featureFolder)) {
+        featureDir[feature] = featureFolder;
+        return
+    }
+
+    return `${getProjectRoot()}features/${feature}`;
 }
 
 function getReduxFolder(feature) {
