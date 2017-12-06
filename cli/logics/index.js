@@ -9,13 +9,14 @@ const entry = require('./entry');
 const reducer = require('./reducer');
 
 function make(feature, name, options) {
-    const featureReduxFolder = refactor.getReduxFolder(feature);
-    if (!fs.existsSync(featureReduxFolder)) {
+    const featureFolder = refactor.getFeatureFolder(feature);
+
+    if (!fs.existsSync(featureFolder)) {
         refactor.error(`Feature name "${feature}" not exists in your project.`);
     }
 
     refactor.info(
-` 
+        ` 
 =====================================
 =           Generating              =
 =====================================

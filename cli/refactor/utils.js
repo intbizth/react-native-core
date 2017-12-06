@@ -1,5 +1,6 @@
 const path = require('path');
 const _ = require('lodash');
+const shell = require('shelljs');
 const colors = require('colors/safe');
 
 
@@ -29,8 +30,12 @@ function success(msg) {
     console.log(colors.green(msg));
 }
 
+function getFeatureFolder(feature) {
+    return `${getProjectRoot()}src/features/${feature}`;
+}
+
 function getReduxFolder(feature) {
-    return path.resolve(__dirname, `../../features/${feature}/redux`);
+    return `${getFeatureFolder(feature)}/redux`;
 }
 
 let pkgJson = null;
@@ -57,7 +62,7 @@ function getProjectRoot() {
         // Traverse above until find the package.json.
         while (cwd && lastDir !== cwd) {
             const pkgPath = joinPath(cwd, 'package.json');
-            if (shell.test('-e', pkgPath) && require(pkgPath).rekit) { // eslint-disable-line
+            if (shell.test('-e', pkgPath)) { // eslint-disable-line
                 prjRoot = cwd;
                 break;
             }
@@ -72,6 +77,7 @@ module.exports = {
     getPkgJson,
     getProjectRoot,
     getReduxFolder,
+    getFeatureFolder,
     info,
     success,
     error,
