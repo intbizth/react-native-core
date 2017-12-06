@@ -5,6 +5,7 @@ const importExport = require('./importExport');
 const lines = require('./lines');
 const utils = require('./utils');
 const vio = require('./vio');
+const object = require('./object');
 
 module.exports = {
     ...array,
@@ -14,4 +15,5 @@ module.exports = {
     ...lines,
     ...utils,
     ...vio,
+    ...object
 };

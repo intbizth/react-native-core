@@ -10,9 +10,9 @@ program
 
 program
     .command('make <feature> <action>')
-    .option('-t --type <actionType>', 'Action type', /^(request|submit|paginate)$/i, 'request')
-    .option('-s --with-saga <filename>', 'Saga', /^(.*)$/)
-    .option('-r --with-reducer <stateKey>', 'Reducer')
+    .option('-t --type <actionType>', 'Action type one of request|submit|paginate', /^(request|submit|paginate)$/i, 'request')
+    .option('-s --with-saga <filename>', 'Make action with saga as well', /^(.*)$/)
+    .option('-r --with-reducer <stateKey>', 'Make action with reducer as well')
     .description('Make a request action with saga')
     .action(make)
 ;

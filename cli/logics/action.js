@@ -13,7 +13,7 @@ function add(feature, name, options, constantName) {
     }
 
     const i = refactor.lastLineIndex(lines, /(.+)/);
-    lines.splice(i + 1, 0, `export const ${actionName} = ${_getFunc(options.type)}("${constantName}");`);
+    lines.splice(i + 1, 0, `export const ${actionName} = ${_getFunc(options.type)}(${constantName});`);
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(

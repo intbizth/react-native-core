@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const refactor = require('../refactor');
 const CONSTANTS = require('../constants');
-const colors = require('colors/safe');
 
 function add(feature, name, options) {
     name = _.toUpper(name);

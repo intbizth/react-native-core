@@ -19,13 +19,35 @@ function add(feature, name, options, actionName, constantName) {
         lines = refactor.getLines(targetPath);
     }
 
-    const sagaName = _.camelCase('watch_' + name + '_' + options.type + 'ed');
+    const sagaName = _.camelCase('watch_' + name + '_' + options.type);
 
     if(refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${sagaName}(.+)`))) {
         return sagaName;
     }
 
-    const funcLines = `
+
+    let funcLines = [];
+    let sagasImport = [];
+    if ('paginate' === options.type) {
+        sagasImport = ['take', 'select', 'fork'];
+        funcLines = `
+export const ${sagaName} = function*() {
+    while (true) {
+        const action = yield take([${constantName}.REQUEST, ${constantName}.LOADMORE, ${constantName}.REFRESH]);
+        const data = yield select((state) => state.${_.snakeCase(feature)}[${constantName}_STATE_KEY]);
+        
+        yield fork(${_getActionSaga(options.type)}, ${actionName}, {
+            apiFunction: '__SOME_API__',
+            args: [
+                (action.type === ${constantName}.LOADMORE) ? data.pagination.currentPage + 1 : 1
+            ]
+        }, {showLoading: action.type === ${constantName}.REQUEST})
+    }
+};
+`.split('\n');
+    } else {
+        sagasImport = ['call', 'takeLatest'];
+        funcLines = `
 export const ${sagaName} = function*() {
     yield takeLatest(${constantName}.${_getConst(options.type)}, function*() {
         // do staff
@@ -36,6 +58,8 @@ export const ${sagaName} = function*() {
     });
 };
 `.split('\n');
+    }
+
 
     let i = refactor.lastLineIndex(lines, /^export const reducer/);
     if (-1 === i) {
@@ -48,7 +72,7 @@ export const ${sagaName} = function*() {
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(
-        refactor.addImportFrom(ast, `redux-saga/effects`, '', ['call', 'takeLatest']),
+        refactor.addImportFrom(ast, `redux-saga/effects`, '', sagasImport),
         refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${options.type}/actions`, '', [_getActionSaga(options.type)]),
         refactor.addImportFrom(ast, `../constants`, '', [constantName]),
         refactor.addImportFrom(ast, `../actions`, '', [actionName]),
