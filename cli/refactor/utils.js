@@ -1,5 +1,7 @@
 const path = require('path');
 const _ = require('lodash');
+const colors = require('colors/safe');
+
 
 /**
  * The unified version of 'path.join'. It forces forward slash ('/') on both unix like or windows system.
@@ -14,6 +16,17 @@ const _ = require('lodash');
 function joinPath() {
     // A consistent and normalized version of path.join cross platforms
     return path.normalize(path.join.apply(path, arguments)).replace(/\\/g, '/');
+}
+
+function info(msg) {
+    console.log(colors.blue(msg));
+}
+function error(msg) {
+    console.log(colors.red(msg));
+    throw new Error(msg);
+}
+function success(msg) {
+    console.log(colors.green(msg));
 }
 
 function getReduxFolder(feature) {
@@ -58,5 +71,8 @@ function getProjectRoot() {
 module.exports = {
     getPkgJson,
     getProjectRoot,
-    getReduxFolder
+    getReduxFolder,
+    info,
+    success,
+    error,
 };

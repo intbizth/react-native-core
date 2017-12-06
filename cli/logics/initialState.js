@@ -16,27 +16,14 @@ function add(feature, name, options, constantName) {
             refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/paginate/reducer`, '', ['makeInitialState']),
             refactor.addObjectProperty(ast, 'initialState', '', `...makeInitialState(${stateKeyName})`)
         ));
-
-        return;
+    } else {
+        refactor.updateFile(targetPath, ast => [].concat(
+            refactor.addImportFrom(ast, `./constants`, '', [stateKeyName]),
+            refactor.addObjectProperty(ast, 'initialState', `[${stateKeyName}]`, 'null')
+        ));
     }
 
-    refactor.updateFile(targetPath, ast => [].concat(
-        refactor.addImportFrom(ast, `./constants`, '', [stateKeyName]),
-        refactor.addObjectProperty(ast, 'initialState', `[${stateKeyName}]`, 'null')
-    ));
-}
-
-function _getFunc(actionType) {
-    switch (actionType) {
-        case 'request':
-            return 'AbstractRequestAction';
-        case 'submit':
-            return 'AbstractSubmitAction';
-        case 'paginate':
-            return 'AbstractPaginateAction';
-    }
-
-    throw new Error(`Unexpected type ${actionType}`);
+    refactor.success(`InitialState: "${stateKeyName}" created in "${targetPath}"`);
 }
 
 module.exports = {

@@ -3,17 +3,19 @@ const refactor = require('../refactor');
 const CONSTANTS = require('../constants');
 
 function add(feature, name, options) {
-    name = _.toUpper(name);
+    name = _.toUpper(_.snakeCase(name));
     const targetPath = refactor.getReduxFolder(feature) + '/constants.js';
     const lines = refactor.getLines(targetPath);
     const i = refactor.lastLineIndex(lines, /^export /);
 
     if(!refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${name}(.+)`))) {
+        refactor.success(`Constant: "${name}" created in "${targetPath}"`);
         lines.splice(i + 1, 0, `export const ${name} = ${_getFunc(options.type)}("${name}");`);
     }
 
     if (options.withReducer) {
         if(!refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${name}_STATE_KEY(.+)`))) {
+            refactor.success(`Constant: "${name}_STATE_KEY" created in "${targetPath}"`);
             lines.splice(i + 2, 0, `export const ${name}_STATE_KEY = "${options.withReducer}";`);
         }
     }

@@ -7,6 +7,8 @@ function linkSaga(feature, name, options, sagaName) {
     refactor.updateFile(targetPath, ast => [].concat(
         refactor.addExportFrom(ast, `./reducers/${_.snakeCase(options.withSaga)}`, '', [sagaName])
     ));
+
+    refactor.success(`Saga: "${sagaName}" linked in "${targetPath}"`);
 }
 
 function linkReducer(feature, name, options, reducerName) {
@@ -16,6 +18,8 @@ function linkReducer(feature, name, options, reducerName) {
         refactor.addImportFrom(ast, `./reducers/${_.snakeCase(options.withSaga)}`, '', [reducerName]),
         refactor.addToArray(ast, 'reducers', reducerName)
     ));
+
+    refactor.success(`Reducer: "${reducerName}" linked in "${targetPath}"`);
 }
 
 module.exports = {

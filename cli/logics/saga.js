@@ -22,6 +22,7 @@ function add(feature, name, options, actionName, constantName) {
     const sagaName = _.camelCase('watch_' + name + '_' + options.type);
 
     if(refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${sagaName}(.+)`))) {
+        refactor.info(`Saga: "${sagaName}" exists in "${targetPath}"`);
         return sagaName;
     }
 
@@ -78,6 +79,7 @@ export const ${sagaName} = function*() {
         refactor.addImportFrom(ast, `../actions`, '', [actionName]),
     ));
 
+    refactor.success(`Saga: "${sagaName}" created in "${targetPath}"`);
     return sagaName;
 }
 
@@ -98,8 +100,6 @@ function _getConst(actionType) {
             return 'REQUEST';
         case 'submit':
             return 'SUBMIT';
-        case 'paginate':
-            return 'REQUEST';
     }
 }
 

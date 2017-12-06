@@ -9,6 +9,7 @@ function add(feature, name, options, constantName) {
     const lines = refactor.getLines(targetPath);
 
     if(refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${actionName}(.+)`))) {
+        refactor.info(`Action: "${actionName}" exists in "${targetPath}"`);
         return actionName;
     }
 
@@ -21,6 +22,7 @@ function add(feature, name, options, constantName) {
         refactor.addImportFrom(ast, `./constants`, '', [constantName])
     ));
 
+    refactor.success(`Action: "${actionName}" created in "${targetPath}"`);
     return actionName;
 }
 
@@ -34,7 +36,7 @@ function _getFunc(actionType) {
             return 'AbstractPaginateAction';
     }
 
-    throw new Error(`Unexpected type ${actionType}`);
+    refactor.error(`Unexpected type ${actionType}`);
 }
 
 module.exports = {

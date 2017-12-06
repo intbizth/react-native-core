@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const shell = require('shelljs');
 const babylon = require('babylon');
-const colors = require('colors/safe');
+const utils = require('./utils');
 
 let fileLines = {};
 let mvs = {}; // Files to move
@@ -27,8 +27,7 @@ function getLines(filePath) {
         });
 
         if (!shell.test('-e', realFilePath)) {
-            console.log(colors.red('Can\'t find such file: ' + realFilePath));
-            throw new Error;
+            utils.error('Can\'t find such file: ' + realFilePath);
         }
         fileLines[filePath] = shell.cat(realFilePath).split(/\r?\n/);
     }
@@ -61,15 +60,13 @@ function getAst(filePath) {
                 ]
             });
             if (!ast) {
-                console.log(colors.red(`Error: failed to parse ${filePath}, please check syntax.`));
-                throw new Error;
+                utils.error(`Error: failed to parse ${filePath}, please check syntax.`);
             }
             asts[filePath] = ast;
             ast._filePath = filePath;
         } catch (e) {
             console.log(code);
-            console.log(colors.red(`Error: failed to parse ${filePath}, please check syntax.`));
-            throw new Error;
+            utils.error(`Error: failed to parse ${filePath}, please check syntax.`);
         }
     }
     return asts[filePath];

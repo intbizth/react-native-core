@@ -13,6 +13,7 @@ function add(feature, name, options, constantName) {
     let lines = refactor.getLines(targetPath);
 
     if(refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${reducerName}(.+)`))) {
+        refactor.info(`Reducer: "${reducerName}" exists in "${targetPath}"`);
         return reducerName;
     }
 
@@ -25,6 +26,7 @@ function add(feature, name, options, constantName) {
         refactor.addImportFrom(ast, `../constants`, '', [`${constantName}_STATE_KEY`]),
     ));
 
+    refactor.success(`Reducer: "${reducerName}" created in "${targetPath}"`);
     return reducerName;
 }
 

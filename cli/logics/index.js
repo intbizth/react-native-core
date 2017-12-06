@@ -1,5 +1,4 @@
 const fs = require('fs');
-const colors = require('colors/safe');
 const _ = require('lodash');
 const refactor = require('../refactor');
 const constant = require('./constant');
@@ -12,20 +11,34 @@ const reducer = require('./reducer');
 function make(feature, name, options) {
     const featureReduxFolder = refactor.getReduxFolder(feature);
     if (!fs.existsSync(featureReduxFolder)) {
-        console.log(colors.red(`Feature name "${feature}" not exists in your project.`))
-        throw new Error;
+        refactor.error(`Feature name "${feature}" not exists in your project.`);
     }
 
+    refactor.info(
+` 
+=====================================
+=           Generating              =
+=====================================
+`
+    );
     const constantName = constant.add(feature, name, options);
     initialState.add(feature, name, options, constantName);
     const actionName = action.add(feature, name, options, constantName);
     const sagaName = saga.add(feature, name, options, actionName, constantName);
     const reducerName = reducer.add(feature, name, options, constantName);
+
+    refactor.info(
+        ` 
+=====================================
+=              Linking              =
+=====================================
+`
+    );
     entry.linkSaga(feature, name, options, sagaName);
     entry.linkReducer(feature, name, options, reducerName);
-    refactor.flush();
+    //refactor.flush();
 
-    console.log(colors.green('Complete ;))'))
+    refactor.info('Complete.. ;))');
 }
 
 module.exports = { make };
