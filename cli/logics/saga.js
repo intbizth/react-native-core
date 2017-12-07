@@ -49,10 +49,6 @@ export const ${sagaName} = function*() {
     }
 };
 `.split('\n');
-        refactor.updateFile(targetPath, ast => [].concat(
-            refactor.addImportFrom(ast, `../constants`, '', [constantStateKeyName]),
-        ));
-
     } else if ('submit' === type) {
         sagasImport = ['take', 'fork'];
         funcLines = `
@@ -109,6 +105,12 @@ export const ${sagaName} = function*() {
         refactor.addImportFrom(ast, `../constants`, '', [constantName]),
         refactor.addImportFrom(ast, `../actions`, '', [actionName]),
     ));
+
+    if ('paginate' === type) {
+        refactor.updateFile(targetPath, ast => [].concat(
+            refactor.addImportFrom(ast, `../constants`, '', [constantStateKeyName]),
+        ));
+    }
 
     refactor.success(`Saga: "${sagaName}" created in "${targetPath}"`);
 }
