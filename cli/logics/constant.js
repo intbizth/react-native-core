@@ -2,31 +2,30 @@ const _ = require('lodash');
 const refactor = require('../refactor');
 const CONSTANTS = require('../constants');
 
-function add(feature, name, options) {
-    name = _.toUpper(_.snakeCase(name));
+function add({feature, name, type, withReducer}) {
+    const constName = makeConstantName(name);
     const targetPath = refactor.getReduxFolder(feature) + '/constants.js';
     const lines = refactor.getLines(targetPath);
     const i = refactor.lastLineIndex(lines, /^export /);
 
-    if(!refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${name}(.+)`))) {
-        refactor.success(`Constant: "${name}" created in "${targetPath}"`);
-        lines.splice(i + 1, 0, `export const ${name} = ${_getFunc(options.type)}("${name}");`);
+    if(!refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${constName}(.+)`))) {
+        refactor.success(`Constant: "${constName}" created in "${targetPath}"`);
+        lines.splice(i + 1, 0, `export const ${constName} = ${_getFunc(type)}("${constName}");`);
     }
 
-    if (options.withReducer) {
-        if(!refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${name}_STATE_KEY(.+)`))) {
-            refactor.success(`Constant: "${name}_STATE_KEY" created in "${targetPath}"`);
-            lines.splice(i + 2, 0, `export const ${name}_STATE_KEY = "${options.withReducer}";`);
+    if (withReducer) {
+        const constStateKeyName = makeConstantStateKeyName(name);
+        if(!refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${constStateKeyName}(.+)`))) {
+            refactor.success(`Constant: "${constStateKeyName}" created in "${targetPath}"`);
+            lines.splice(i + 2, 0, `export const ${constStateKeyName} = "${withReducer}";`);
         }
     }
 
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(
-        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/submit/action`, '', [_getFunc(options.type)])
+        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/submit/action`, '', [_getFunc(type)])
     ));
-
-    return name;
 }
 
 function _getFunc(actionType) {
@@ -39,9 +38,20 @@ function _getFunc(actionType) {
             return 'createPaginateTypes';
     }
 
-    throw new Error(`Unexpected type ${actionType}`);
+    refactor.error(`Unexpected type ${actionType}`);
+}
+
+
+function makeConstantName(name) {
+    return _.toUpper(_.snakeCase(name));
+}
+
+function makeConstantStateKeyName(name) {
+    return makeConstantName(name) + '_STATE_KEY';
 }
 
 module.exports = {
     add,
+    makeConstantName,
+    makeConstantStateKeyName
 };

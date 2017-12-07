@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const inquirer = require('inquirer');
 const program = require('commander');
 const { make } = require('./logics');
 
@@ -9,12 +10,61 @@ program
 ;
 
 program
-    .command('make <feature> <action>')
-    .option('-t --type <actionType>', 'Action type one of request|submit|paginate', /^(request|submit|paginate)$/i, 'request')
-    .option('-s --with-saga <filename>', 'Make action with saga as well', /^(.*)$/)
-    .option('-r --with-reducer <stateKey>', 'Make action with reducer as well')
+    .command('make')
     .description('Make a request action with saga')
-    .action(make)
+    .action(() => {
+        const questions = [
+            {
+                type: 'input',
+                name: 'feature',
+                message: "What's feature?",
+            },
+            {
+                type: 'input',
+                name: 'name',
+                message: 'What is action name?',
+            },
+            {
+                type: 'list',
+                name: 'type',
+                message: 'What type of action do you need?',
+                choices: ['request', 'submit', 'paginate'],
+            },
+            {
+                type: 'confirm',
+                name: 'saga',
+                message: 'Do you need saga ?',
+                default: false
+            },
+            {
+                type: 'input',
+                name: 'withSaga',
+                message: 'Typing a filename of saga function (no need ".js")',
+                when: function(answers) {
+                    return answers.saga;
+                }
+            },
+            {
+                type: 'confirm',
+                name: 'reducer',
+                message: 'Do you need reducer ?',
+                default: false,
+                when: function(answers) {
+                    return answers.saga;
+                }
+            },
+            {
+                type: 'input',
+                name: 'withReducer',
+                message: 'Typing a state key name',
+                when: function(answers) {
+                    return answers.reducer;
+                }
+            },
+        ];
+
+        inquirer.prompt(questions).then(make);
+    })
 ;
 
 program.parse(process.argv);

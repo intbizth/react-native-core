@@ -8,7 +8,8 @@ const saga = require('./saga');
 const entry = require('./entry');
 const reducer = require('./reducer');
 
-function make(feature, name, options) {
+function make(answers) {
+    const { feature, withSaga, withReducer } = answers;
     const featureFolder = refactor.getFeatureFolder(feature);
 
     if (!fs.existsSync(featureFolder)) {
@@ -22,11 +23,17 @@ function make(feature, name, options) {
 =====================================
 `
     );
-    const constantName = constant.add(feature, name, options);
-    initialState.add(feature, name, options, constantName);
-    const actionName = action.add(feature, name, options, constantName);
-    const sagaName = saga.add(feature, name, options, actionName, constantName);
-    const reducerName = reducer.add(feature, name, options, constantName);
+    constant.add(answers);
+    initialState.add(answers);
+    action.add(answers);
+
+    if (withSaga) {
+        saga.add(answers);
+        if (withReducer) {
+            reducer.add(answers);
+        }
+    }
+
 
     refactor.info(
         ` 
@@ -36,12 +43,11 @@ function make(feature, name, options) {
 `
     );
 
-    if (sagaName) {
-        entry.linkSaga(feature, name, options, sagaName);
-    }
-
-    if (reducerName) {
-        entry.linkSaga(feature, name, options, sagaName);
+    if (withSaga) {
+        entry.linkSaga(answers);
+        if (withReducer) {
+            entry.linkReducer(answers);
+        }
     }
 
     //refactor.flush();

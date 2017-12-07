@@ -1,43 +1,46 @@
 const _ = require('lodash');
 const refactor = require('../refactor');
+const makeActionName = require('./action').makeActionName;
+const makeConstantName = require('./constant').makeConstantName;
+const makeConstantStateKeyName = require('./constant').makeConstantStateKeyName;
 const CONSTANTS = require('../constants');
 
-function add(feature, name, options, actionName, constantName) {
-    if (!options.withSaga) {
-        return;
-    }
+function add({feature, name, type, withSaga}) {
     const reduxFolder = refactor.getReduxFolder(feature);
 
     if (!refactor.dirExists(reduxFolder + '/reducers')) {
         refactor.mkdir(reduxFolder + '/reducers');
     }
 
-    const targetPath =  `${reduxFolder}/reducers/${_.snakeCase(options.withSaga)}.js`;
+    const targetPath =  `${reduxFolder}/reducers/${_.snakeCase(withSaga)}.js`;
 
     let lines = [];
     if (refactor.fileExists(targetPath)) {
         lines = refactor.getLines(targetPath);
     }
 
-    const sagaName = _.camelCase('watch_' + name + '_' + options.type);
+    const sagaName = makeSagaName(name, type);
+    const constantName = makeConstantName(name);
+    const constantStateKeyName = makeConstantStateKeyName(name);
+    const actionName = makeActionName(name);
 
     if(refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${sagaName}(.+)`))) {
         refactor.info(`Saga: "${sagaName}" exists in "${targetPath}"`);
-        return sagaName;
+        return;
     }
 
 
     let funcLines = [];
     let sagasImport = [];
-    if ('paginate' === options.type) {
+    if ('paginate' === type) {
         sagasImport = ['take', 'select', 'fork'];
         funcLines = `
 export const ${sagaName} = function*() {
     while (true) {
         const action = yield take([${constantName}.REQUEST, ${constantName}.LOADMORE, ${constantName}.REFRESH]);
-        const data = yield select((state) => state.${_.snakeCase(feature)}[${constantName}_STATE_KEY]);
+        const data = yield select((state) => state.${_.snakeCase(feature)}[${constantStateKeyName}]);
         
-        yield fork(${_getActionSaga(options.type)}, ${actionName}, {
+        yield fork(${_getActionSaga(type)}, ${actionName}, {
             apiFunction: '__SOME_API__',
             args: [
                 (action.type === ${constantName}.LOADMORE) ? data.pagination.currentPage + 1 : 1
@@ -46,13 +49,36 @@ export const ${sagaName} = function*() {
     }
 };
 `.split('\n');
+    } else if ('submit' === type) {
+        sagasImport = ['call', 'takeLatest'];
+        funcLines = `
+export const ${sagaName} = function*() {
+    const submitAction = yield take(${constantName}.SUBMIT);
+
+        yield fork(${_getActionSaga(type)}, ${actionName}, {
+            apiFunction: '__SOME_API__',
+            args: []
+        });
+
+        const action = yield take([
+            ${constantName}.SUBMIT_VALIDATION_FAILED,
+            ${constantName}.SUBMIT_SUCCESS,
+            ${constantName}.SUBMIT_FAILURE,
+        ]);
+
+        if (action.type === ${constantName}.SUBMIT_SUCCESS) {
+            // do stuff on success
+        }
+    }
+};
+`.split('\n');
     } else {
         sagasImport = ['call', 'takeLatest'];
         funcLines = `
 export const ${sagaName} = function*() {
-    yield takeLatest(${constantName}.${_getConst(options.type)}, function*() {
+    yield takeLatest(${constantName}.${_getConst(type)}, function*() {
         // do staff
-        yield call(${_getActionSaga(options.type)}, ${actionName}, {
+        yield call(${_getActionSaga(type)}, ${actionName}, {
             apiFunction: '__SOME_API__',
             args: []
         })
@@ -74,13 +100,12 @@ export const ${sagaName} = function*() {
 
     refactor.updateFile(targetPath, ast => [].concat(
         refactor.addImportFrom(ast, `redux-saga/effects`, '', sagasImport),
-        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${options.type}/action`, '', [_getActionSaga(options.type)]),
+        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${type}/saga`, '', [_getActionSaga(type)]),
         refactor.addImportFrom(ast, `../constants`, '', [constantName]),
         refactor.addImportFrom(ast, `../actions`, '', [actionName]),
     ));
 
     refactor.success(`Saga: "${sagaName}" created in "${targetPath}"`);
-    return sagaName;
 }
 
 function _getActionSaga(actionType) {
@@ -103,6 +128,11 @@ function _getConst(actionType) {
     }
 }
 
+function makeSagaName(name, actionType) {
+    return _.camelCase('watch_' + name + '_' + actionType);
+}
+
 module.exports = {
     add,
+    makeSagaName
 };

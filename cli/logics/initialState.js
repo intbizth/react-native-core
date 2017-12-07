@@ -1,16 +1,18 @@
 const _ = require('lodash');
 const refactor = require('../refactor');
 const CONSTANTS = require('../constants');
+const makeConstantStateKeyName = require('./constant').makeConstantStateKeyName;
 
-function add(feature, name, options, constantName) {
-    if (!options.withReducer) {
+
+function add({feature, name, type, withReducer}) {
+    if (!withReducer) {
         return;
     }
 
     const targetPath = refactor.getReduxFolder(feature) + '/initialState.js';
-    const stateKeyName = `${constantName}_STATE_KEY`;
+    const stateKeyName = makeConstantStateKeyName(name);
 
-    if ('paginate' === options.type) {
+    if ('paginate' === type) {
         refactor.updateFile(targetPath, ast => [].concat(
             refactor.addImportFrom(ast, `./constants`, '', [stateKeyName]),
             refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/paginate/reducer`, '', ['makeInitialState']),
