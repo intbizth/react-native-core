@@ -50,7 +50,7 @@ function make(answers) {
         }
     }
 
-    //refactor.flush();
+    refactor.flush();
 
     refactor.info('Complete.. ;))');
 }

@@ -50,10 +50,11 @@ export const ${sagaName} = function*() {
 };
 `.split('\n');
     } else if ('submit' === type) {
-        sagasImport = ['call', 'takeLatest'];
+        sagasImport = ['take', 'fork'];
         funcLines = `
 export const ${sagaName} = function*() {
-    const submitAction = yield take(${constantName}.SUBMIT);
+    while (true) {
+        const submitAction = yield take(${constantName}.SUBMIT);
 
         yield fork(${_getActionSaga(type)}, ${actionName}, {
             apiFunction: '__SOME_API__',
