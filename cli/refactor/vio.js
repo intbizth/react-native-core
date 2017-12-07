@@ -4,6 +4,7 @@ const babylon = require('babylon');
 const utils = require('./utils');
 
 let fileLines = {};
+let toDel = {};
 let mvs = {}; // Files to move
 let mvDirs = {}; // Folders to move
 let asts = {};
@@ -79,6 +80,10 @@ function save(filePath, lines) {
     toSave[filePath] = true;
 }
 
+function del(filePath) {
+    toDel[filePath] = true;
+}
+
 function put(filePath, lines) {
     if (typeof lines === 'string') lines = lines.split(/\r?\n/);
     fileLines[filePath] = lines;
@@ -86,7 +91,7 @@ function put(filePath, lines) {
 }
 
 function fileExists(filePath) {
-    return (!!fileLines[filePath] || !!toSave[filePath]) || shell.test('-e', filePath);
+    return (!!fileLines[filePath] || !!toSave[filePath]) && !toDel[filePath] || shell.test('-e', filePath);
 }
 
 function mkdir(dir) {
@@ -94,7 +99,7 @@ function mkdir(dir) {
 }
 
 function dirExists(dir) {
-    return !!dirs[dir] || shell.test('-e', dir);
+    return !!dirs[dir] && !toDel[dir] || shell.test('-e', dir);
 }
 
 function flush() {
@@ -118,6 +123,15 @@ function flush() {
         shell.ShellString(newContent).to(filePath);
     });
 
+    // Delete files
+    Object.keys(toDel).forEach((filePath) => {
+        if (!shell.test('-e', filePath)) {
+            utils.info('Warning: no file to delete: ', 'yellow', filePath);
+        } else {
+            shell.rm('-rf', filePath);
+        }
+    });
+
     return res;
 }
 
@@ -126,6 +140,7 @@ module.exports = {
     getLines,
     getAst,
     save,
+    del,
     mkdir,
     dirExists,
     fileExists,

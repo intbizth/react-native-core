@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const inquirer = require('inquirer');
 const program = require('commander');
-const { make } = require('./logics');
+const { make, remove } = require('./logics');
 
 program
     .version('0.0.1')
@@ -64,6 +64,38 @@ program
         ];
 
         inquirer.prompt(questions).then(make);
+    })
+;
+
+program
+    .command('rm')
+    .description('Remove a request action with saga')
+    .action(() => {
+        remove({
+            feature: 'common',
+            name: 'createPage',
+            withSaga: 'create_page'
+        });return;
+
+        const questions = [
+            {
+                type: 'input',
+                name: 'feature',
+                message: "What's feature?",
+            },
+            {
+                type: 'input',
+                name: 'name',
+                message: 'What is action name?',
+            },
+            {
+                type: 'input',
+                name: 'withSaga',
+                message: 'Typing a filename of saga function (no need ".js")',
+            }
+        ];
+
+        inquirer.prompt(questions).then(remove);
     })
 ;
 

@@ -28,6 +28,25 @@ function add({feature, name, type}) {
     refactor.success(`Action: "${actionName}" created in "${targetPath}"`);
 }
 
+function remove({feature, name, type}) {
+    const actionName = makeActionName(name);
+    const constantName = makeConstantName(name);
+
+    const targetPath = refactor.getReduxFolder(feature) + '/actions.js';
+    const lines = refactor.getLines(targetPath);
+
+    refactor.removeLines(lines, new RegExp(`^export const ${actionName}`));
+
+    refactor.save(targetPath, lines);
+
+    refactor.updateFile(targetPath, ast => [].concat(
+        refactor.removeImportSpecifier(ast, _getFunc(type)),
+        refactor.removeImportSpecifier(ast, constantName)
+    ));
+
+    refactor.success(`Action: "${actionName}" removed in "${targetPath}"`);
+}
+
 function _getFunc(actionType) {
     switch (actionType) {
         case 'request':
@@ -47,5 +66,6 @@ function makeActionName(name) {
 
 module.exports = {
     add,
+    remove,
     makeActionName
 };

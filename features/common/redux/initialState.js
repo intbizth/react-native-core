@@ -1,7 +1,7 @@
 const initialState = {
     loadingOverlayVisible: false,
     loadingOverlayAwareHeader: false,
-    locale: null
+    locale: null,
 };
 
 export default initialState;

@@ -225,7 +225,77 @@ function addExportFrom(ast, moduleSource, defaultExport, namedExport) {
     return changes;
 }
 
+function removeImportSpecifier(ast, name) {
+    // Remove import specifier by local name
+
+    let names = name;
+    if (typeof name === 'string') {
+        names = [name];
+    }
+    const changes = [];
+    let shouldRemove = true;
+    traverse(ast, {
+        CallExpression(path) {
+            if (name[0] === _.get(path, 'node.callee.name')) {
+                shouldRemove = false;
+            }
+        },
+        ImportDeclaration(path) {
+            const node = path.node;
+            const multilines = node.loc.start.line !== node.loc.end.line;
+            if (!node.specifiers) return;
+            const newSpecifiers = node.specifiers.filter(s => !names.includes(s.local.name));
+            if (newSpecifiers.length === 0) {
+                // no specifiers, should delete the import statement
+                changes.push({
+                    start: node.start,
+                    end: node.end,
+                    replacement: '',
+                });
+            } else if (newSpecifiers.length !== node.specifiers.length) {
+                // remove the specifier import
+                const newNode = Object.assign({}, node, { specifiers: newSpecifiers });
+                let newCode = generate(newNode, {}).code;
+                if (multilines) newCode = formatMultilineImport(newCode);
+                changes.push({
+                    start: node.start,
+                    end: node.end,
+                    replacement: newCode,
+                });
+            }
+        }
+    });
+
+    if (false === shouldRemove) {
+        return [];
+    }
+
+    return changes;
+}
+
+function removeExportSpecifier(ast, name) {
+    const changes = [];
+    traverse(ast, {
+        ExportNamedDeclaration(path) {
+            const node = path.node;
+            if (!node.declaration) return;
+            _.forEach(node.declaration.declarations, (declaration) => {
+                if(name === _.get(declaration, 'id.name')) {
+                    changes.push({
+                        start: node.start,
+                        end: node.end,
+                        replacement: '',
+                    });
+                }
+            });
+        }
+    });
+    return changes;
+}
+
 module.exports = {
     addImportFrom: common.acceptFilePathForAst(addImportFrom),
     addExportFrom: common.acceptFilePathForAst(addExportFrom),
+    removeImportSpecifier: common.acceptFilePathForAst(removeImportSpecifier),
+    removeExportSpecifier: common.acceptFilePathForAst(removeExportSpecifier),
 };

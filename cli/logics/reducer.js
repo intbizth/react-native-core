@@ -31,6 +31,33 @@ function add({feature, name, type, withSaga}) {
     refactor.success(`Reducer: "${reducerName}" created in "${targetPath}"`);
 }
 
+function remove({feature, name, type, withSaga}) {
+    const reduxFolder = refactor.getReduxFolder(feature);
+    const targetPath =  `${reduxFolder}/reducers/${_.snakeCase(withSaga)}.js`;
+    if (!refactor.fileExists(targetPath)) {
+        return;
+    }
+
+    const reducerName =  makeReducerName(name);
+    const constantStateKeyName =  makeConstantStateKeyName(name);
+
+    let lines = refactor.getLines(targetPath);
+
+    if(!refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${reducerName}(.+)`))) {
+        return;
+    }
+
+    refactor.removeLines(lines, new RegExp(`^export const ${reducerName}`));
+    refactor.save(targetPath, lines);
+
+    refactor.updateFile(targetPath, ast => [].concat(
+        refactor.removeImportSpecifier(ast, _getReducerName(type)),
+        refactor.removeImportSpecifier(ast, constantStateKeyName),
+    ));
+
+    refactor.success(`Reducer: "${reducerName}" removed in "${targetPath}"`);
+}
+
 function _getReducerName(actionType) {
     switch (actionType) {
         case 'request':
@@ -49,5 +76,6 @@ function makeReducerName(name) {
 
 module.exports = {
     add,
+    remove,
     makeReducerName
 };

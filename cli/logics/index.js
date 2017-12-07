@@ -55,4 +55,50 @@ function make(answers) {
     refactor.info('Complete.. ;))');
 }
 
-module.exports = { make };
+function remove(answers) {
+    const { feature, withSaga } = answers;
+    const featureFolder = refactor.getFeatureFolder(feature);
+
+    if (!fs.existsSync(featureFolder)) {
+        refactor.error(`Feature name "${feature}" not exists in your project.`);
+    }
+
+    refactor.info(
+        ` 
+=====================================
+=             Removing              =
+=====================================
+`
+    );
+    // answers.type = constant.remove(answers); // will return guessing type...
+    // initialState.remove(answers);
+    // action.remove(answers);
+    answers.type = 'submit';
+
+    if (withSaga) {
+        saga.remove(answers);
+        reducer.remove(answers);
+
+        saga.removeEmptyFile(answers);
+    }
+
+
+    refactor.info(
+        ` 
+=====================================
+=             Unlinking             =
+=====================================
+`
+    );
+
+    if (withSaga) {
+        entry.unlinkSaga(answers);
+        entry.unlinkReducer(answers);
+    }
+
+    refactor.flush();
+
+    refactor.info('Complete.. ;))');
+}
+
+module.exports = { make, remove };

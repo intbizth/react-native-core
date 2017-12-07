@@ -49,6 +49,10 @@ export const ${sagaName} = function*() {
     }
 };
 `.split('\n');
+        refactor.updateFile(targetPath, ast => [].concat(
+            refactor.addImportFrom(ast, `../constants`, '', [constantStateKeyName]),
+        ));
+
     } else if ('submit' === type) {
         sagasImport = ['take', 'fork'];
         funcLines = `
@@ -109,6 +113,44 @@ export const ${sagaName} = function*() {
     refactor.success(`Saga: "${sagaName}" created in "${targetPath}"`);
 }
 
+function remove({feature, name, type, withSaga}) {
+    const reduxFolder = refactor.getReduxFolder(feature);
+
+    const targetPath =  `${reduxFolder}/reducers/${_.snakeCase(withSaga)}.js`;
+    if (!refactor.fileExists(targetPath)) {
+        return;
+    }
+
+    const sagaName = makeSagaName(name, type);
+    const constantName = makeConstantName(name);
+    const constantStateKeyName = makeConstantStateKeyName(name);
+    const actionName = makeActionName(name);
+
+    refactor.updateFile(targetPath, ast => [].concat(
+        refactor.removeExportSpecifier(ast, sagaName),
+        refactor.removeImportSpecifier(ast, _getActionSaga(type)),
+        refactor.removeImportSpecifier(ast, constantName),
+        refactor.removeImportSpecifier(ast, constantStateKeyName),
+        refactor.removeImportSpecifier(ast, actionName),
+    ));
+
+    refactor.success(`Saga: "${sagaName}" removed in "${targetPath}"`);
+}
+
+function removeEmptyFile({feature, withSaga}) {
+    const reduxFolder = refactor.getReduxFolder(feature);
+    const targetPath =  `${reduxFolder}/reducers/${_.snakeCase(withSaga)}.js`;
+    if (!refactor.fileExists(targetPath)) {
+        return;
+    }
+
+    if (!refactor.removeFileWhichNoExported(targetPath)) {
+        return;
+    }
+
+    refactor.success(`Filename: "${targetPath}" removed`);
+}
+
 function _getActionSaga(actionType) {
     switch (actionType) {
         case 'request':
@@ -135,5 +177,7 @@ function makeSagaName(name, actionType) {
 
 module.exports = {
     add,
+    remove,
+    removeEmptyFile,
     makeSagaName
 };

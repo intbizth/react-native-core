@@ -14,6 +14,17 @@ function linkSaga({feature, name, type, withSaga}) {
     refactor.success(`Saga: "${sagaName}" linked in "${targetPath}"`);
 }
 
+function unlinkSaga({feature, name, type}) {
+    const targetPath = refactor.getReduxFolder(feature) + '/sagas.js';
+    const sagaName = makeSagaName(name, type);
+
+    refactor.updateFile(targetPath, ast => [].concat(
+        refactor.removeExportSpecifier(ast, sagaName)
+    ));
+
+    refactor.success(`Saga: "${sagaName}" unlinked in "${targetPath}"`);
+}
+
 function linkReducer({feature, name, withSaga}) {
     const targetPath = refactor.getReduxFolder(feature) + '/reducer.js';
     const reducerName = makeReducerName(name);
@@ -26,7 +37,21 @@ function linkReducer({feature, name, withSaga}) {
     refactor.success(`Reducer: "${reducerName}" linked in "${targetPath}"`);
 }
 
+function unlinkReducer({feature, name}) {
+    const targetPath = refactor.getReduxFolder(feature) + '/reducer.js';
+    const reducerName = makeReducerName(name);
+
+    refactor.updateFile(targetPath, ast => [].concat(
+        refactor.removeImportSpecifier(ast, reducerName),
+        refactor.removeFromArray(ast, 'reducers', reducerName)
+    ));
+
+    refactor.success(`Reducer: "${reducerName}" unlinked in "${targetPath}"`);
+}
+
 module.exports = {
     linkSaga,
-    linkReducer
+    unlinkSaga,
+    linkReducer,
+    unlinkReducer,
 };

@@ -28,6 +28,27 @@ function add({feature, name, type, withReducer}) {
     refactor.success(`InitialState: "${stateKeyName}" created in "${targetPath}"`);
 }
 
+function remove({feature, name, type}) {
+    const targetPath = refactor.getReduxFolder(feature) + '/initialState.js';
+    const stateKeyName = makeConstantStateKeyName(name);
+
+    if ('paginate' === type) {
+        refactor.updateFile(targetPath, ast => [].concat(
+            refactor.removeImportSpecifier(ast, stateKeyName),
+            refactor.removeImportSpecifier(ast, 'makeInitialState'),
+            refactor.removeObjectProperty(ast, 'initialState', `...makeInitialState(${stateKeyName})`)
+        ));
+    } else {
+        refactor.updateFile(targetPath, ast => [].concat(
+            refactor.removeImportSpecifier(ast, stateKeyName),
+            refactor.removeObjectProperty(ast, 'initialState', `[${stateKeyName}]`)
+        ));
+    }
+
+    refactor.success(`InitialState: "${stateKeyName}" removed in "${targetPath}"`);
+}
+
 module.exports = {
     add,
+    remove
 };
