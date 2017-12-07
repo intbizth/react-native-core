@@ -4,7 +4,6 @@ const traverse = require('babel-traverse').default;
 const generate = require('babel-generator').default;
 const babelTypes = require('babel-types');
 const common = require('./common');
-const identifier = require('./identifier');
 
 const babelGeneratorOptions = {
     quotes: 'single',

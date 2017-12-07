@@ -5,7 +5,7 @@ const { getAstAndCode } = require('../../../../../../test');
 const refactor = require('../../../../../../../cli/refactor');
 
 exports.test = () => {
-    describe('When `removeFromArray` single line', () => {
+    describe('array.js#removeFromArray: single line', () => {
         it('should return a string not contains specific item', () => {
             const source = getAstAndCode(path.join(__dirname, 'source.js'));
             const expect = getAstAndCode(path.join(__dirname, 'expect.js'));

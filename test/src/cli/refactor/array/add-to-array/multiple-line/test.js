@@ -5,7 +5,7 @@ const { getAstAndCode } = require('../../../../../../test');
 const refactor = require('../../../../../../../cli/refactor');
 
 exports.test = () => {
-    describe('When `addToArray` multiple line', () => {
+    describe('array.js#addToArray: multiple line', () => {
         it('should return a string contains new item', () => {
             const source = getAstAndCode(path.join(__dirname, 'source.js'));
             const expect = getAstAndCode(path.join(__dirname, 'expect.js'));

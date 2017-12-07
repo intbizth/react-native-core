@@ -10,21 +10,6 @@ function isStringMatch(str, match) {
     return match.test(str);
 }
 
-function lineIndex(lines, match, fromMatch) {
-    if (fromMatch && !_.isNumber(fromMatch)) {
-        fromMatch = lineIndex(lines, fromMatch);
-    }
-    if (_.isString(match)) {
-        // Match string
-        return _.findIndex(lines, l => l.indexOf(match) >= 0, fromMatch || 0);
-    } else if (_.isFunction(match)) {
-        // Callback
-        return _.findIndex(lines, match);
-    }
-
-    return _.findIndex(lines, l => match.test(l), fromMatch || 0);
-}
-
 function lastLineIndex(lines, match) {
     if (_.isString(match)) {
         // String
@@ -43,7 +28,6 @@ function removeLines(lines, str) {
 }
 
 module.exports = {
-    lineIndex,
     lastLineIndex,
     isStringMatch,
     removeLines: common.acceptFilePathForLines(removeLines),
