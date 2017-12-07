@@ -70,10 +70,9 @@ function remove(answers) {
 =====================================
 `
     );
-    // answers.type = constant.remove(answers); // will return guessing type...
-    // initialState.remove(answers);
-    // action.remove(answers);
-    answers.type = 'submit';
+    answers.type = constant.remove(answers); // will return guessing type...
+    initialState.remove(answers);
+    action.remove(answers);
 
     if (withSaga) {
         saga.remove(answers);

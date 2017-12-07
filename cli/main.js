@@ -71,12 +71,6 @@ program
     .command('rm')
     .description('Remove a request action with saga')
     .action(() => {
-        remove({
-            feature: 'common',
-            name: 'createPage',
-            withSaga: 'create_page'
-        });return;
-
         const questions = [
             {
                 type: 'input',

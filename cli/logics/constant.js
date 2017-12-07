@@ -36,7 +36,7 @@ function remove({feature, name}) {
 
     const i = _.findIndex(lines, l => new RegExp(`^export const ${constName}`).test(l));
     if (-1 === i) {
-        refactor.error(`Not found action name`);
+        refactor.error(`Not found action name "${name}"`);
     }
 
     let type = '';

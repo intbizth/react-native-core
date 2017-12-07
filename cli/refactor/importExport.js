@@ -278,18 +278,54 @@ function removeExportSpecifier(ast, name) {
     traverse(ast, {
         ExportNamedDeclaration(path) {
             const node = path.node;
-            if (!node.declaration) return;
-            _.forEach(node.declaration.declarations, (declaration) => {
-                if(name === _.get(declaration, 'id.name')) {
+            const multilines = node.loc.start.line !== node.loc.end.line;
+
+            if (!node.declaration && node.specifiers) {
+                const newSpecifiers = _.filter(node.specifiers, (spec) => {
+                    return name !== _.get(spec, 'local.name');
+                });
+
+                if (newSpecifiers.length === 0) {
+                    // no specifiers, should delete the import statement
                     changes.push({
                         start: node.start,
                         end: node.end,
                         replacement: '',
                     });
+
+                    return;
                 }
-            });
+
+                if (newSpecifiers.length === node.specifiers.length) {
+                    return;
+                }
+
+                const newNode = Object.assign({}, node, { specifiers: newSpecifiers });
+                let newCode = generate(newNode, {}).code;
+                if (multilines) newCode = formatMultilineImport(newCode);
+                changes.push({
+                    start: node.start,
+                    end: node.end,
+                    replacement: newCode,
+                });
+
+                return;
+            }
+
+            if (node.declaration) {
+                _.forEach(node.declaration.declarations, (declaration) => {
+                    if(name === _.get(declaration, 'id.name')) {
+                        changes.push({
+                            start: node.start,
+                            end: node.end,
+                            replacement: '',
+                        });
+                    }
+                });
+            }
         }
     });
+
     return changes;
 }
 
