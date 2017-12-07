@@ -157,7 +157,7 @@ function removeFromArray(ast, varName, identifierName) {
             const node = path.node;
             if (_.get(node, 'id.name') !== varName || _.get(node, 'init.type') !== 'ArrayExpression') return;
             node.init._filePath = ast._filePath;
-            const toRemove = _.find(node.init.elements, ele => ele.name === identifierName);
+            const toRemove = _.find(node.init.elements, ele => (ele.name === identifierName || ele.value === identifierName));
             changes = removeFromArrayByNode(node.init, toRemove);
             path.stop();
         }
