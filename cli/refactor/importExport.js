@@ -20,7 +20,7 @@ function formatMultilineImport(importCode) {
     if (m) {
         const arr = _.compact(m[1].split(/, */).map(_.trim));
         if (arr.length) {
-            return importCode.replace(/\{[^}]+\}/, `{\n  ${arr.join(',\n  ')},\n}`);
+            return importCode.replace(/\{[^}]+\}/, `{\n    ${arr.join(',\n    ')},\n}`);
         }
     }
     return importCode;
@@ -279,6 +279,7 @@ function removeExportSpecifier(ast, name) {
             const node = path.node;
             const multilines = node.loc.start.line !== node.loc.end.line;
 
+            // case object
             if (!node.declaration && node.specifiers) {
                 const newSpecifiers = _.filter(node.specifiers, (spec) => {
                     return name !== _.get(spec, 'local.name');
@@ -311,6 +312,20 @@ function removeExportSpecifier(ast, name) {
                 return;
             }
 
+
+            // case function
+            if (node.declaration && 'FunctionDeclaration' === node.declaration.type) {
+                if(name === _.get(node.declaration, 'id.name')) {
+                    changes.push({
+                        start: node.start,
+                        end: node.end,
+                        replacement: '',
+                    });
+                }
+                return;
+            }
+
+            // case const
             if (node.declaration) {
                 _.forEach(node.declaration.declarations, (declaration) => {
                     if(name === _.get(declaration, 'id.name')) {
@@ -321,6 +336,7 @@ function removeExportSpecifier(ast, name) {
                         });
                     }
                 });
+                return;
             }
         }
     });
