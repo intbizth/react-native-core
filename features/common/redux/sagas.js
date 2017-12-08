@@ -11,22 +11,41 @@ export function* watchAlertChannel() {
     }
 }
 
-export function* watchRequestApiFailure(text = 'Something wrong! during request to server.') {
-    yield takeLatest(action => /^(.*)_FAILURE$/.test(action.type), function ({errors, __meta__}) {
+/**
+ * @param text string|object
+ *
+ * text object shape : { server: 'some text on server error', client: 'some text on client error' }
+ */
+export function* watchRequestApiFailure(text = {server: 'Something wrong! during request to server.', client: 'Please check your network connection and try again'}) {
+    yield takeLatest(action => /^(.*)_FAILURE$/.test(action.type), function ({ errors, __meta__ }) {
         if (__meta__.disabledDisplayGlobalError) {
             return;
         }
 
-        // eslint-disable-next-line no-undef
-        if (__DEV__ && errors.response) {
-            const {error, error_description} = errors.response.data;
-            if (error || error_description) {
-                text = error + '\r\n' +  error_description;
+        function getErrorMessage(errors, defaultText) {
+            let text = defaultText;
+
+            // eslint-disable-next-line no-undef
+            if (!__DEV__) {
+                return (!!errors.response) ? text.server || text : text.client || text
             }
+
+            // case can request to server but server error
+            if (errors.response) {
+                if (errors.response.data) {
+                    const { error, error_description } = errors.response.data;
+                    if (error) text = error;
+                    if (error_description) text += '\n' + error_description;
+
+                    return text;
+                }
+            }
+
+            return errors.message || text;
         }
 
         Toast.show({
-            text,
+            text: getErrorMessage(errors, text),
             position: 'bottom',
             buttonText: 'Close',
             duration: 3000
