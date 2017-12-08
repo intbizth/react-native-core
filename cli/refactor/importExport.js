@@ -235,13 +235,14 @@ function removeImportSpecifier(ast, name) {
     let shouldRemove = true;
     traverse(ast, {
         CallExpression(path) {
-            if (name[0] === _.get(path, 'node.callee.name')) {
+            if (names[0] === _.get(path, 'node.callee.name')) {
                 shouldRemove = false;
             }
         },
         ImportDeclaration(path) {
             const node = path.node;
             const multilines = node.loc.start.line !== node.loc.end.line;
+
             if (!node.specifiers) return;
             const newSpecifiers = node.specifiers.filter(s => !names.includes(s.local.name));
             if (newSpecifiers.length === 0) {

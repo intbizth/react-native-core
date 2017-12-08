@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const inquirer = require('inquirer');
 const program = require('commander');
-const { make, remove } = require('./logics');
+const { make, remove } = require('./core');
 
 program
     .version('0.0.1')

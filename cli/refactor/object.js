@@ -28,10 +28,16 @@ function addObjectProperty(ast, varName, propName, propValue) {
                         replacement: `${indent}  ${propName}${(propName ? ': ': '')}${propValue},\n`,
                     });
                 } else {
+                    // remove space in last object value such: { p:1, p:2 } => { p:1, p:2, p:3 } not { p:1, p:2 , p:3 }
+                    let start = targetPos;
+                    if (_.get(_.last(props), 'value.end') !== targetPos) {
+                        start--;
+                    }
+
                     changes.push({
-                        start: targetPos,
+                        start: start,
                         end: targetPos,
-                        replacement: `${props.length ? ', ' : ' '}${(propName ? ':': '')} ${propValue} `,
+                        replacement: `${props.length ? ', ' : ' '}${(propName ? `${propName}:`: '')} ${propValue} `,
                     });
                 }
             } else {

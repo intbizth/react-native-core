@@ -24,7 +24,7 @@ function add({feature, name, type, withReducer}) {
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(
-        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/submit/action`, '', [_getFunc(type)])
+        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${type}/action`, '', [_getFunc(type)])
     ));
 }
 
@@ -50,8 +50,8 @@ function remove({feature, name}) {
         refactor.error(`Not found action type`);
     }
 
-    refactor.removeLines(lines, new RegExp(`^export const ${constName}`));
-    refactor.removeLines(lines, new RegExp(`^export const ${constStateKeyName}`));
+    refactor.removeLines(lines, new RegExp(`^export const ${constName} `));
+    refactor.removeLines(lines, new RegExp(`^export const ${constStateKeyName} `));
 
 
     refactor.save(targetPath, lines);

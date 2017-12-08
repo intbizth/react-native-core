@@ -135,6 +135,18 @@ function flush() {
     return res;
 }
 
+function reset() {
+    // Cant use obj = {} because mutation
+    Object.keys(fileLines).forEach(function(key) { delete fileLines[key]; });
+    Object.keys(toDel).forEach(function(key) { delete toDel[key]; });
+    Object.keys(toSave).forEach(function(key) { delete toSave[key]; });
+    Object.keys(asts).forEach(function(key) { delete asts[key]; });
+    Object.keys(dirs).forEach(function(key) { delete dirs[key]; });
+    Object.keys(mvDirs).forEach(function(key) { delete mvDirs[key]; });
+    Object.keys(mvs).forEach(function(key) { delete mvs[key]; });
+}
+
+
 module.exports = {
     getContent,
     getLines,
@@ -144,5 +156,15 @@ module.exports = {
     mkdir,
     dirExists,
     fileExists,
-    flush
+    flush,
+    reset,
+
+    // export for test case
+    fileLines,
+    toDel,
+    toSave,
+    asts,
+    dirs,
+    mvDirs,
+    mvs
 };

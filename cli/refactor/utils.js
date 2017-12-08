@@ -38,13 +38,15 @@ function getFeatureFolder(feature) {
         return featureDir[feature];
     }
 
-    let featureFolder = `${getProjectRoot()}src/features/${feature}`;
+    const projectRoot = getProjectRoot();
+    let featureFolder = `${projectRoot}src/features/${feature}`;
+
     if (fs.existsSync(featureFolder)) {
         featureDir[feature] = featureFolder;
         return featureFolder;
     }
 
-    featureDir[feature] = featureFolder = `${getProjectRoot()}features/${feature}`;
+    featureDir[feature] = featureFolder = (true === global.__TEST__) ? `${projectRoot}test/mock/features/${feature}` : `${projectRoot}features/${feature}`;
     return featureFolder;
 }
 
