@@ -25,7 +25,7 @@ function add({feature, name, type, withSaga}) {
 
     refactor.updateFile(targetPath, ast => [].concat(
         refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${type}/reducer`,  _getReducerName(type)),
-        refactor.addImportFrom(ast, `../constants`, '', [`${constantStateKeyName}`]),
+        refactor.addImportFrom(ast, `../constants`, '', [constantName, constantStateKeyName]),
     ));
 
     refactor.success(`Reducer: "${reducerName}" created in "${targetPath}"`);
@@ -39,6 +39,7 @@ function remove({feature, name, type, withSaga}) {
     }
 
     const reducerName =  makeReducerName(name);
+    const constantName =  makeConstantName(name);
     const constantStateKeyName =  makeConstantStateKeyName(name);
 
     let lines = refactor.getLines(targetPath);
@@ -52,6 +53,7 @@ function remove({feature, name, type, withSaga}) {
 
     refactor.updateFile(targetPath, ast => [].concat(
         refactor.removeImportSpecifier(ast, _getReducerName(type)),
+        refactor.removeImportSpecifier(ast, constantName),
         refactor.removeImportSpecifier(ast, constantStateKeyName),
     ));
 

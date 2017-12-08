@@ -3,62 +3,77 @@ const assert = require('assert');
 const path = require('path');
 const { getAstAndCode } = require('../../../../../test');
 const refactor = require('../../../../../../cli/refactor');
-const action = require('../../../../../../cli/core/action');
+const reducer = require('../../../../../../cli/core/reducer');
 
 exports.test = () => {
-    describe('action.js#add', () => {
+    describe('reducer.js#add', () => {
         afterEach(function() {
             refactor.reset();
         });
 
-
-        it('should add a constant with request type', () => {
+        it('should not change if `withReducer === null`', () => {
             const args = {
                 feature: 'blank',
                 name: 'getPageById',
                 type: 'request',
+                withSaga: 'reducer',
                 withReducer: null
             };
 
-            action.add(args);
+            reducer.add(args);
 
-            const fileLines = refactor.fileLines[refactor.getReduxFolder(args.feature) + '/actions.js'];
+            const fileLines = refactor.fileLines[refactor.getReduxFolder(args.feature) + 'reducers/reducer.js'];
+            assert.equal('undefined', typeof fileLines);
+        });
+
+        it('should add a reducer with request type', () => {
+            const args = {
+                feature: 'blank',
+                name: 'getPageById',
+                type: 'request',
+                withSaga: 'reducer',
+                withReducer: 'pageDetail'
+            };
+
+            reducer.add(args);
+
+            const fileLines = refactor.fileLines[refactor.getReduxFolder(args.feature) + '/reducers/reducer.js'];
             assert.equal('object', typeof fileLines);
 
             const expect = getAstAndCode(path.join(__dirname, 'expect_request.js'));
             assert.equal(expect.code, fileLines.join('\n'));
         });
 
-        it('should add a constant with submit type', () => {
+        it('should add a reducer with submit type', () => {
             const args = {
                 feature: 'blank',
                 name: 'createPage',
                 type: 'submit',
-                withReducer: null
+                withSaga: 'reducer',
+                withReducer: 'createPageResult'
             };
 
-            action.add(args);
+            reducer.add(args);
 
-
-            const fileLines = refactor.fileLines[refactor.getReduxFolder(args.feature) + '/actions.js'];
+            const fileLines = refactor.fileLines[refactor.getReduxFolder(args.feature) + '/reducers/reducer.js'];
             assert.equal('object', typeof fileLines);
 
             const expect = getAstAndCode(path.join(__dirname, 'expect_submit.js'));
             assert.equal(expect.code, fileLines.join('\n'));
         });
 
-        it('should add a constant with paginate type', () => {
+        it('should add a reducer with paginate type', () => {
             const args = {
                 feature: 'blank',
                 name: 'fetchPages',
                 type: 'paginate',
-                withReducer: null
+                withSaga: 'reducer',
+                withReducer: 'pages'
             };
 
-            action.add(args);
+            reducer.add(args);
 
-
-            const fileLines = refactor.fileLines[refactor.getReduxFolder(args.feature) + '/actions.js'];
+            const fileLines = refactor.fileLines[refactor.getReduxFolder(args.feature) + '/reducers/reducer.js'];
             assert.equal('object', typeof fileLines);
 
             const expect = getAstAndCode(path.join(__dirname, 'expect_paginate.js'));

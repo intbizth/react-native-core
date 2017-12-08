@@ -12,6 +12,12 @@ function add({feature, name, type, withReducer}) {
     const targetPath = refactor.getReduxFolder(feature) + '/initialState.js';
     const stateKeyName = makeConstantStateKeyName(name);
 
+    const lines = refactor.getLines(targetPath);
+    const i = refactor.lastLineIndex(lines, /^const initialState =/);
+    if (-1 === i) {
+        refactor.error(`${targetPath} const initialState is not defined`);
+    }
+
     if ('paginate' === type) {
         refactor.updateFile(targetPath, ast => [].concat(
             refactor.addImportFrom(ast, `./constants`, '', [stateKeyName]),

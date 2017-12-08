@@ -11,22 +11,6 @@ exports.test = () => {
             refactor.reset();
         });
 
-        it('should throw when has no feature', () => {
-            const args = {
-                feature: 'bar',
-                name: 'getPageById',
-                type: 'request',
-                withReducer: null
-            };
-
-            assert.throws(
-                () => { constant.add(args) },
-                Error,
-                new RegExp('^Can\'t find such file')
-            );
-
-        });
-
         it('should add a constant with request type', () => {
             const args = {
                 feature: 'blank',

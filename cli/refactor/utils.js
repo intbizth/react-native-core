@@ -21,13 +21,21 @@ function joinPath() {
 }
 
 function info(msg) {
+    if (global.__TEST__) {
+        return;
+    }
     console.log(colors.blue(msg));
 }
 function error(msg) {
-    console.log(colors.red(msg));
+    if (!global.__TEST__) {
+        console.log(colors.red(msg));
+    }
     throw new Error(msg);
 }
 function success(msg) {
+    if (global.__TEST__) {
+        return;
+    }
     console.log(colors.green(msg));
 }
 
