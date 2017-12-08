@@ -33,4 +33,3 @@ export function* watchRequestApiFailure(text = 'Something wrong! during request 
         })
     });
 }
-export { watchCreatePageSubmit, watchUpdatePageSubmit, watchGetPageByIdRequest, watchFetchPagesPaginate } from './reducers/page';
