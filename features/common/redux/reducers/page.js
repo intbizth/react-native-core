@@ -1,9 +1,10 @@
 import { take, fork, select, call, takeLatest } from 'redux-saga/effects';
 import { doSubmit } from 'react-native-core/api/submit/saga';
+import { CREATE_PAGE, UPDATE_PAGE, UPDATE_PAGE_STATE_KEY, GET_PAGE_BY_ID, FETCH_PAGES_STATE_KEY, FETCH_PAGES } from '../constants';
+import { createPage, updatePage, getPageById, fetchPages } from '../actions';
 import submitReducer from 'react-native-core/api/submit/reducer';
 import { doRequest } from 'react-native-core/api/request/saga';
-import { CREATE_PAGE, UPDATE_PAGE, UPDATE_PAGE_STATE_KEY, GET_PAGE_BY_ID } from '../constants';
-import { createPage, updatePage, getPageById, fetchPages } from '../actions';
+import indexReducer from 'react-native-core/api/paginate/reducer';
 
 export const watchCreatePageSubmit = function*() {
     while (true) {
@@ -64,7 +65,7 @@ export const watchFetchPagesPaginate = function*() {
     while (true) {
         const action = yield take([FETCH_PAGES.REQUEST, FETCH_PAGES.LOADMORE, FETCH_PAGES.REFRESH]);
         const data = yield select((state) => state.common[FETCH_PAGES_STATE_KEY]);
-
+        
         yield fork(doRequest, fetchPages, {
             apiFunction: '__SOME_API__',
             args: [
@@ -74,3 +75,4 @@ export const watchFetchPagesPaginate = function*() {
     }
 };
 
+export const fetchPagesReducer = indexReducer(FETCH_PAGES, FETCH_PAGES_STATE_KEY);

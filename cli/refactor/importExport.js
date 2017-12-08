@@ -233,10 +233,18 @@ function removeImportSpecifier(ast, name) {
     }
     const changes = [];
     let shouldRemove = true;
+
     traverse(ast, {
         CallExpression(path) {
             if (names[0] === _.get(path, 'node.callee.name')) {
                 shouldRemove = false;
+                path.stop();
+            }
+        },
+        Identifier(path) {
+            if (names[0] === _.get(path, 'node.name') && _.includes(['call', 'fork'], _.get(path, 'parent.callee.name'))) {
+                shouldRemove = false;
+                path.stop();
             }
         },
         ImportDeclaration(path) {

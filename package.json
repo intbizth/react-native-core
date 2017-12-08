@@ -1,12 +1,18 @@
 {
   "name": "react-native-core",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "core feature for react native project",
   "main": "index.js",
+  "engines": {
+    "node": ">=7.0.0"
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha"
+  },
   "dependencies": {
     "babel-generator": "^6.26.0",
     "babel-traverse": "^6.26.0",
-    "babylon": "^7.0.0-beta.34",
+    "babylon": "^6.18.0",
     "colors": "^1.1.2",
     "commander": "^2.12.2",
     "inquirer": "^4.0.1",

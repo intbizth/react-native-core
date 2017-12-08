@@ -53,8 +53,7 @@ function remove({feature, name, type, withSaga}) {
 
     refactor.updateFile(targetPath, ast => [].concat(
         refactor.removeImportSpecifier(ast, _getReducerName(type)),
-        refactor.removeImportSpecifier(ast, constantName),
-        refactor.removeImportSpecifier(ast, constantStateKeyName),
+        refactor.removeImportSpecifier(ast, [constantName, constantStateKeyName]),
     ));
 
     refactor.success(`Reducer: "${reducerName}" removed in "${targetPath}"`);

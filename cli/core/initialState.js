@@ -40,14 +40,18 @@ function remove({feature, name, type}) {
 
     if ('paginate' === type) {
         refactor.updateFile(targetPath, ast => [].concat(
+            refactor.removeObjectProperty(ast, 'initialState', `...makeInitialState(${stateKeyName})`)
+        ));
+        refactor.updateFile(targetPath, ast => [].concat(
             refactor.removeImportSpecifier(ast, stateKeyName),
             refactor.removeImportSpecifier(ast, 'makeInitialState'),
-            refactor.removeObjectProperty(ast, 'initialState', `...makeInitialState(${stateKeyName})`)
         ));
     } else {
         refactor.updateFile(targetPath, ast => [].concat(
-            refactor.removeImportSpecifier(ast, stateKeyName),
             refactor.removeObjectProperty(ast, 'initialState', `[${stateKeyName}]`)
+        ));
+        refactor.updateFile(targetPath, ast => [].concat(
+            refactor.removeImportSpecifier(ast, stateKeyName),
         ));
     }
 

@@ -3,10 +3,10 @@ const assert = require('assert');
 const path = require('path');
 const { getAstAndCode } = require('../../../../../test');
 const refactor = require('../../../../../../cli/refactor');
-const reducer = require('../../../../../../cli/core/reducer');
+const saga = require('../../../../../../cli/core/saga');
 
 exports.test = () => {
-    describe('reducer.js#remove', () => {
+    describe('saga.js#remove', () => {
         afterEach(function() {
             refactor.reset();
         });
@@ -19,7 +19,7 @@ exports.test = () => {
                 withSaga: 'page',
             };
 
-            reducer.remove(args);
+            saga.remove(args);
 
             const fileLines = refactor.fileLines[refactor.getReduxFolder(args.feature) + '/reducers/page.js'];
             assert.equal('object', typeof fileLines);
@@ -36,7 +36,7 @@ exports.test = () => {
                 withSaga: 'page',
             };
 
-            reducer.remove(args);
+            saga.remove(args);
 
             const fileLines = refactor.fileLines[refactor.getReduxFolder(args.feature) + '/reducers/page.js'];
             assert.equal('object', typeof fileLines);
@@ -44,6 +44,7 @@ exports.test = () => {
             const expect = getAstAndCode(path.join(__dirname, 'expect_submit.js'));
             assert.equal(expect.code, fileLines.join('\n'));
         });
+
 
         it('should remove a reducer with paginate type', () => {
             const args = {
@@ -53,7 +54,7 @@ exports.test = () => {
                 withSaga: 'page',
             };
 
-            reducer.remove(args);
+            saga.remove(args);
 
             const fileLines = refactor.fileLines[refactor.getReduxFolder(args.feature) + '/reducers/page.js'];
             assert.equal('object', typeof fileLines);

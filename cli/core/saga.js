@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const refactor = require('../refactor');
-const makeActionName = require('./action').makeActionName;
-const makeConstantName = require('./constant').makeConstantName;
-const makeConstantStateKeyName = require('./constant').makeConstantStateKeyName;
+const { makeActionName } = require('./action');
+const { makeConstantName } = require('./constant');
+const { makeConstantStateKeyName } = require('./constant');
 const CONSTANTS = require('../constants');
 
 function add({feature, name, type, withSaga}) {
@@ -39,7 +39,7 @@ export const ${sagaName} = function*() {
     while (true) {
         const action = yield take([${constantName}.REQUEST, ${constantName}.LOADMORE, ${constantName}.REFRESH]);
         const data = yield select((state) => state.${_.snakeCase(feature)}[${constantStateKeyName}]);
-        
+
         yield fork(${_getActionSaga(type)}, ${actionName}, {
             apiFunction: '__SOME_API__',
             args: [
@@ -101,7 +101,7 @@ export const ${sagaName} = function*() {
 
     refactor.updateFile(targetPath, ast => [].concat(
         refactor.addImportFrom(ast, `redux-saga/effects`, '', sagasImport),
-        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${type}/saga`, '', [_getActionSaga(type)]),
+        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${_getFolderActionSaga(type)}/saga`, '', [_getActionSaga(type)]),
         refactor.addImportFrom(ast, `../constants`, '', [constantName]),
         refactor.addImportFrom(ast, `../actions`, '', [actionName]),
     ));
@@ -129,10 +129,12 @@ function remove({feature, name, type, withSaga}) {
     const actionName = makeActionName(name);
 
     refactor.updateFile(targetPath, ast => [].concat(
-        refactor.removeExportSpecifier(ast, sagaName),
+        refactor.removeExportSpecifier(ast, sagaName)
+    ));
+
+    refactor.updateFile(targetPath, ast => [].concat(
         refactor.removeImportSpecifier(ast, _getActionSaga(type)),
-        refactor.removeImportSpecifier(ast, constantName),
-        refactor.removeImportSpecifier(ast, constantStateKeyName),
+        refactor.removeImportSpecifier(ast, [constantName, constantStateKeyName]),
         refactor.removeImportSpecifier(ast, actionName),
     ));
 
@@ -161,6 +163,17 @@ function _getActionSaga(actionType) {
             return 'doSubmit';
         case 'paginate':
             return 'doRequest';
+    }
+}
+
+function _getFolderActionSaga(actionType) {
+    switch (actionType) {
+        case 'request':
+            return 'request';
+        case 'submit':
+            return 'submit';
+        case 'paginate':
+            return 'request';
     }
 }
 
