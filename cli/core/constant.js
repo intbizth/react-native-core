@@ -1,30 +1,41 @@
 const _ = require('lodash');
+const tmpl = require('blueimp-tmpl');
 const refactor = require('../refactor');
 const CONSTANTS = require('../constants');
+const prototype = require('../prototype/constant');
 
 function add({feature, name, type, withReducer}) {
     const constName = makeConstantName(name);
+    const constCreator = _getFunc(type);
     const targetPath = refactor.getReduxFolder(feature) + '/constants.js';
     const lines = refactor.getLines(targetPath);
     const i = refactor.lastLineIndex(lines, /^export /);
 
-    if(!refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${constName}(.+)`))) {
+    const constTpl = tmpl(prototype.constant, {
+        constName,
+        constCreator,
+    });
+    if(!refactor.isStringMatch(lines.join(" "), constTpl)) {
+        refactor.writeLine(lines, i + 1, constTpl);
         refactor.success(`Constant: "${constName}" created in "${targetPath}"`);
-        lines.splice(i + 1, 0, `export const ${constName} = ${_getFunc(type)}("${constName}");`);
     }
 
     if (withReducer) {
         const constStateKeyName = makeConstantStateKeyName(name);
-        if(!refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${constStateKeyName}(.+)`))) {
+        const constWithReducerTpl = tmpl(prototype.constantWithReducer, {
+            constName: constStateKeyName,
+            stateKey: withReducer,
+        });
+        if(!refactor.isStringMatch(lines.join(" "), constWithReducerTpl)) {
+            refactor.writeLine(lines, i + 2, constWithReducerTpl);
             refactor.success(`Constant: "${constStateKeyName}" created in "${targetPath}"`);
-            lines.splice(i + 2, 0, `export const ${constStateKeyName} = "${withReducer}";`);
         }
     }
 
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(
-        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${type}/action`, '', [_getFunc(type)])
+        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${type}/action`, '', [constCreator])
     ));
 }
 
