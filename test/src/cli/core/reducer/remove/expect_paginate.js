@@ -73,4 +73,3 @@ export const watchFetchPagesPaginate = function*() {
         }, {showLoading: action.type === FETCH_PAGES.REQUEST})
     }
 };
-
