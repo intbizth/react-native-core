@@ -34,10 +34,33 @@ function writeLine(lines, fromLine, data) {
     }
 
     lines.splice(fromLine, 0,  ...code);
+    _resolveBlankLine(lines);
 }
 
 function removeLines(lines, str) {
     _.remove(lines, line => isStringMatch(line, str));
+    _resolveBlankLine(lines);
+}
+
+function _resolveBlankLine(lines) {
+    function isEmptyLine(line) {
+        line = line.replace(/\s/g, '');
+        return '' === line;
+    }
+
+    if (!isEmptyLine(_.last(lines))) {
+        lines.push("");
+    }
+
+    const length = lines.length;
+
+    for (let i = length - 1; i >= 0; i--) {
+        if (isEmptyLine(lines[i]) && !isEmptyLine(lines[i - 1])) {
+            break;
+        }
+
+        lines.splice(i, 1);
+    }
 }
 
 module.exports = {
