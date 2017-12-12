@@ -20,7 +20,7 @@ function add({feature, name, type}) {
         return;
     }
 
-    refactor.writeLine(lines, _.last(lines), actionTpl);
+    refactor.writeLine(lines, lines.length + 1, actionTpl);
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(

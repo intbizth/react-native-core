@@ -45,7 +45,7 @@ function remove({feature, name}) {
     const targetPath = refactor.getReduxFolder(feature) + '/constants.js';
     const lines = refactor.getLines(targetPath);
 
-    const i = _.findIndex(lines, l => new RegExp(`^export const ${constName}`).test(l));
+    const i = _.findIndex(lines, l => new RegExp(`^export const ${constName} = create`).test(l));
     if (-1 === i) {
         refactor.error(`Not found action name "${name}"`);
     }
@@ -68,7 +68,7 @@ function remove({feature, name}) {
         constCreator,
     });
     refactor.removeLines(lines, constTpl);
-    refactor.removeLines(lines, new RegExp(`^export const ${constStateKeyName} `));
+    refactor.removeLines(lines, new RegExp(`^export const ${constStateKeyName} =`));
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(

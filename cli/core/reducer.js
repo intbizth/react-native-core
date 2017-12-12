@@ -28,7 +28,7 @@ function add({feature, name, type, withSaga}) {
         return;
     }
 
-    refactor.writeLine(lines, _.last(lines) + 1, reducerTpl);
+    refactor.writeLine(lines, lines.length + 1, reducerTpl);
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(
