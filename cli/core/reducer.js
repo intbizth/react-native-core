@@ -1,30 +1,38 @@
 const _ = require('lodash');
+const tmpl = require('blueimp-tmpl');
 const refactor = require('../refactor');
 const makeConstantStateKeyName = require('./constant').makeConstantStateKeyName;
 const makeConstantName = require('./constant').makeConstantName;
 const CONSTANTS = require('../constants');
-
+const prototype = require('../prototype/reducer');
 
 function add({feature, name, type, withSaga}) {
     const reduxFolder = refactor.getReduxFolder(feature);
     const targetPath =  `${reduxFolder}/reducers/${_.snakeCase(withSaga)}.js`;
     const reducerName =  makeReducerName(name);
+    const reducer =  _getReducerName(type);
     const constantName =  makeConstantName(name);
     const constantStateKeyName =  makeConstantStateKeyName(name);
 
+    const reducerTpl = tmpl(prototype, {
+        reducerName,
+        reducer,
+        constantName,
+        constantStateKeyName
+    });
+
     let lines = refactor.getLines(targetPath);
 
-    if(refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${reducerName}(.+)`))) {
+    if(refactor.isStringMatch(lines.join(" "), reducerTpl)) {
         refactor.info(`Reducer: "${reducerName}" exists in "${targetPath}"`);
         return;
     }
 
-    lines.splice(lines.length + 1, 0, `export const ${reducerName} = ${_getReducerName(type)}(${constantName}, ${constantStateKeyName});`);
-
+    refactor.writeLine(lines, _.last(lines) + 1, reducerTpl);
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(
-        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${type}/reducer`,  _getReducerName(type)),
+        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${type}/reducer`,  reducer),
         refactor.addImportFrom(ast, `../constants`, '', [constantName, constantStateKeyName]),
     ));
 
@@ -38,21 +46,27 @@ function remove({feature, name, type, withSaga}) {
         return;
     }
 
+    const reducer =  _getReducerName(type);
     const reducerName =  makeReducerName(name);
     const constantName =  makeConstantName(name);
     const constantStateKeyName =  makeConstantStateKeyName(name);
+    const reducerTpl = tmpl(prototype, {
+        reducerName,
+        reducer,
+        constantName,
+        constantStateKeyName
+    });
 
     let lines = refactor.getLines(targetPath);
-
-    if(!refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${reducerName}(.+)`))) {
+    if(!refactor.isStringMatch(lines.join(" "), reducerTpl)) {
         return;
     }
 
-    refactor.removeLines(lines, new RegExp(`^export const ${reducerName}`));
+    refactor.removeLines(lines, reducerTpl);
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(
-        refactor.removeImportSpecifier(ast, _getReducerName(type)),
+        refactor.removeImportSpecifier(ast, reducer),
         refactor.removeImportSpecifier(ast, [constantName, constantStateKeyName]),
     ));
 

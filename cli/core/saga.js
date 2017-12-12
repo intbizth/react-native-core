@@ -1,9 +1,11 @@
 const _ = require('lodash');
+const tmpl = require('blueimp-tmpl');
 const refactor = require('../refactor');
 const { makeActionName } = require('./action');
 const { makeConstantName } = require('./constant');
 const { makeConstantStateKeyName } = require('./constant');
 const CONSTANTS = require('../constants');
+const prototype = require('../prototype/saga');
 
 function add({feature, name, type, withSaga}) {
     const reduxFolder = refactor.getReduxFolder(feature);
@@ -23,6 +25,7 @@ function add({feature, name, type, withSaga}) {
     const constantName = makeConstantName(name);
     const constantStateKeyName = makeConstantStateKeyName(name);
     const actionName = makeActionName(name);
+    const actionSaga = _getActionSaga(type);
 
     if(refactor.isStringMatch(lines.join(" "), new RegExp(`(.+)export const ${sagaName}(.+)`))) {
         refactor.info(`Saga: "${sagaName}" exists in "${targetPath}"`);
@@ -30,78 +33,26 @@ function add({feature, name, type, withSaga}) {
     }
 
 
-    let funcLines = [];
-    let sagasImport = [];
-    if ('paginate' === type) {
-        sagasImport = ['take', 'select', 'fork'];
-        funcLines = `
-export const ${sagaName} = function*() {
-    while (true) {
-        const action = yield take([${constantName}.REQUEST, ${constantName}.LOADMORE, ${constantName}.REFRESH]);
-        const data = yield select((state) => state.${_.snakeCase(feature)}[${constantStateKeyName}]);
-
-        yield fork(${_getActionSaga(type)}, ${actionName}, {
-            apiFunction: '__SOME_API__',
-            args: [
-                (action.type === ${constantName}.LOADMORE) ? data.pagination.currentPage + 1 : 1
-            ]
-        }, {showLoading: action.type === ${constantName}.REQUEST})
-    }
-};
-`.split('\n');
-    } else if ('submit' === type) {
-        sagasImport = ['take', 'fork'];
-        funcLines = `
-export const ${sagaName} = function*() {
-    while (true) {
-        const submitAction = yield take(${constantName}.SUBMIT);
-
-        yield fork(${_getActionSaga(type)}, ${actionName}, {
-            apiFunction: '__SOME_API__',
-            args: []
-        });
-
-        const action = yield take([
-            ${constantName}.SUBMIT_VALIDATION_FAILED,
-            ${constantName}.SUBMIT_SUCCESS,
-            ${constantName}.SUBMIT_FAILURE,
-        ]);
-
-        if (action.type === ${constantName}.SUBMIT_SUCCESS) {
-            // do stuff on success
-        }
-    }
-};
-`.split('\n');
-    } else {
-        sagasImport = ['call', 'takeLatest'];
-        funcLines = `
-export const ${sagaName} = function*() {
-    yield takeLatest(${constantName}.${_getConst(type)}, function*() {
-        // do staff
-        yield call(${_getActionSaga(type)}, ${actionName}, {
-            apiFunction: '__SOME_API__',
-            args: []
-        })
+    const sagaCode = tmpl(prototype[type].code, {
+        sagaName,
+        constantName,
+        actionName,
+        constantStateKeyName,
+        actionSaga,
+        featureReducerKey: _.snakeCase(feature)
     });
-};
-`.split('\n');
-    }
-
 
     let i = refactor.lastLineIndex(lines, /^export const reducer/);
     if (-1 === i) {
         i = lines.length + 1;
     }
-    for (let j in funcLines) {
-        lines.splice(i + 1 + j, 0,  funcLines[j]);
-    }
 
+    refactor.writeLine(lines, i, sagaCode);
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(
-        refactor.addImportFrom(ast, `redux-saga/effects`, '', sagasImport),
-        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${_getFolderActionSaga(type)}/saga`, '', [_getActionSaga(type)]),
+        refactor.addImportFrom(ast, `redux-saga/effects`, '', prototype[type].sagaImports),
+        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${_getFolderActionSaga(type)}/saga`, '', [actionSaga]),
         refactor.addImportFrom(ast, `../constants`, '', [constantName]),
         refactor.addImportFrom(ast, `../actions`, '', [actionName]),
     ));
@@ -174,15 +125,6 @@ function _getFolderActionSaga(actionType) {
             return 'submit';
         case 'paginate':
             return 'request';
-    }
-}
-
-function _getConst(actionType) {
-    switch (actionType) {
-        case 'request':
-            return 'REQUEST';
-        case 'submit':
-            return 'SUBMIT';
     }
 }
 

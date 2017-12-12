@@ -61,10 +61,14 @@ function remove({feature, name}) {
         refactor.error(`Not found action type`);
     }
 
-    refactor.removeLines(lines, new RegExp(`^export const ${constName} `));
+    const constCreator = _getFunc(type);
+
+    const constTpl = tmpl(prototype.constant, {
+        constName,
+        constCreator,
+    });
+    refactor.removeLines(lines, constTpl);
     refactor.removeLines(lines, new RegExp(`^export const ${constStateKeyName} `));
-
-
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(
