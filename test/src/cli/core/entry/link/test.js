@@ -58,5 +58,25 @@ exports.test = () => {
             const expect = getAstAndCode(path.join(__dirname, 'expect_reducer_linked.js'));
             assert.equal(expect.code, fileLines.join('\n'));
         });
+
+        it('should linked a feature reducer,saga to root', () => {
+            const feature = 'newFeature';
+
+            entry.linkFeature(feature);
+
+            const commonFolder = refactor.getProjectRoot() + 'common';
+
+            const rootReducerFileLines = refactor.fileLines[commonFolder + '/rootReducer.js'];
+            assert.equal('object', typeof rootReducerFileLines);
+
+            const expectRootReducer = getAstAndCode(path.join(__dirname, 'expect_root_reducer_linked.js'));
+            assert.equal(expectRootReducer.code, rootReducerFileLines.join('\n'));
+
+            const rootSagaFileLines = refactor.fileLines[commonFolder + '/rootSaga.js'];
+            assert.equal('object', typeof rootSagaFileLines);
+
+            const expectRootSaga = getAstAndCode(path.join(__dirname, 'expect_root_saga_linked.js'));
+            assert.equal(expectRootSaga.code, rootSagaFileLines.join('\n'));
+        });
     })
 };

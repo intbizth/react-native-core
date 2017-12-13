@@ -6,6 +6,18 @@ const makeConstantName = require('./constant').makeConstantName;
 const CONSTANTS = require('../constants');
 const prototype = require('../prototype/reducer');
 
+const FILENAME = 'reducer.js';
+
+function init(feature) {
+    const targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
+
+    const lines = [];
+    refactor.writeLine(lines, 0, tmpl(prototype.init, {}));
+    refactor.save(targetPath, lines);
+
+    refactor.success(`${targetPath} was created`);
+}
+
 function add({feature, name, type, withSaga}) {
     const reduxFolder = refactor.getReduxFolder(feature);
     const targetPath =  `${reduxFolder}/reducers/${_.snakeCase(withSaga)}.js`;
@@ -14,7 +26,7 @@ function add({feature, name, type, withSaga}) {
     const constantName =  makeConstantName(name);
     const constantStateKeyName =  makeConstantStateKeyName(name);
 
-    const reducerTpl = tmpl(prototype, {
+    const reducerTpl = tmpl(prototype.make, {
         reducerName,
         reducer,
         constantName,
@@ -50,7 +62,7 @@ function remove({feature, name, type, withSaga}) {
     const reducerName =  makeReducerName(name);
     const constantName =  makeConstantName(name);
     const constantStateKeyName =  makeConstantStateKeyName(name);
-    const reducerTpl = tmpl(prototype, {
+    const reducerTpl = tmpl(prototype.make, {
         reducerName,
         reducer,
         constantName,
@@ -90,7 +102,9 @@ function makeReducerName(name) {
 
 
 module.exports = {
+    init,
     add,
     remove,
-    makeReducerName
+    makeReducerName,
+    FILENAME
 };

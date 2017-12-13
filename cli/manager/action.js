@@ -1,12 +1,12 @@
 const fs = require('fs');
-const _ = require('lodash');
 const refactor = require('../refactor');
-const constant = require('./constant');
-const action = require('./action');
-const initialState = require('./initialState');
-const saga = require('./saga');
-const entry = require('./entry');
-const reducer = require('./reducer');
+const constant = require('../core/constant');
+const action = require('../core/action');
+const initialState = require('../core/initialState');
+const saga = require('../core/saga');
+const entry = require('../core/entry');
+const reducer = require('../core/reducer');
+
 
 function make(answers) {
     const { feature, withSaga, withReducer } = answers;

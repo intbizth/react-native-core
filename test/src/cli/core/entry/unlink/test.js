@@ -58,5 +58,25 @@ exports.test = () => {
             const expect = getAstAndCode(path.join(__dirname, 'expect_reducer_unlinked.js'));
             assert.equal(expect.code, fileLines.join('\n'));
         });
+
+        it('should unlinked a feature reducer,saga to root', () => {
+            const feature = 'page';
+
+            entry.unlinkFeature(feature);
+
+            const commonFolder = refactor.getProjectRoot() + 'common';
+
+            const rootReducerFileLines = refactor.fileLines[commonFolder + '/rootReducer.js'];
+            assert.equal('object', typeof rootReducerFileLines);
+
+            const expectRootReducer = getAstAndCode(path.join(__dirname, 'expect_root_reducer_unlinked.js'));
+            assert.equal(expectRootReducer.code, rootReducerFileLines.join('\n'));
+
+            const rootSagaFileLines = refactor.fileLines[commonFolder + '/rootSaga.js'];
+            assert.equal('object', typeof rootSagaFileLines);
+
+            const expectRootSaga = getAstAndCode(path.join(__dirname, 'expect_root_saga_unlinked.js'));
+            assert.equal(expectRootSaga.code, rootSagaFileLines.join('\n'));
+        });
     })
 };

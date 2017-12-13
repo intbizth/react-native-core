@@ -5,6 +5,13 @@ const makeConstantName = require('./constant').makeConstantName;
 const CONSTANTS = require('../constants');
 const prototype = require('../prototype/action');
 
+const FILENAME = 'actions.js';
+
+function init(feature) {
+    const targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
+    refactor.save(targetPath, [""]);
+    refactor.success(`${targetPath} was created`);
+}
 
 function add({feature, name, type}) {
     const actionName = makeActionName(name);
@@ -12,7 +19,7 @@ function add({feature, name, type}) {
     const constantName = makeConstantName(name);
     const actionTpl = tmpl(prototype, { actionName, actionCreator, constantName });
 
-    const targetPath = refactor.getReduxFolder(feature) + '/actions.js';
+    const targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
     const lines = refactor.getLines(targetPath);
 
     if(refactor.isStringMatch(lines.join(" "), actionTpl)) {
@@ -37,7 +44,7 @@ function remove({feature, name, type}) {
     const actionCreator = _getFunc(type);
     const actionTpl = tmpl(prototype, { actionName, actionCreator, constantName });
 
-    const targetPath = refactor.getReduxFolder(feature) + '/actions.js';
+    const targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
     const lines = refactor.getLines(targetPath);
 
     refactor.removeLines(lines, actionTpl);
@@ -69,7 +76,9 @@ function makeActionName(name) {
 }
 
 module.exports = {
+    init,
     add,
     remove,
-    makeActionName
+    makeActionName,
+    FILENAME
 };

@@ -1,6 +1,4 @@
-module.exports = {
-    init:
-`import initialState from './initialState';
+import initialState from './initialState';
 
 const reducers = [
 
@@ -16,7 +14,4 @@ export default function reducer(state = initialState, action = {}) {
     }
     /* istanbul ignore next */
     return reducers.reduce((s, r) => r(s, action), newState);
-}`,
-    make: `export const {%=o.reducerName%} = {%=o.reducer%}({%=o.constantName%}, {%=o.constantStateKeyName%});`
-};
-
+}
