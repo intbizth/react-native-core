@@ -94,7 +94,7 @@ program
 ;
 
 program
-    .command('mf')
+    .command('make-feature')
     .description('Create a feature')
     .action(() => {
         const questions = [
@@ -110,7 +110,7 @@ program
 ;
 
 program
-    .command('rf')
+    .command('rm-feature')
     .description('Remove a feature')
     .action(() => {
         const questions = [
