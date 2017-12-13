@@ -8,6 +8,18 @@ var makeConstantName = require('./constant').makeConstantName;
 var CONSTANTS = require('../constants');
 var prototype = require('../prototype/reducer');
 
+var FILENAME = 'reducer.js';
+
+function init(feature) {
+    var targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
+
+    var lines = [];
+    refactor.writeLine(lines, 0, tmpl(prototype.init, {}));
+    refactor.save(targetPath, lines);
+
+    refactor.success(targetPath + ' was created');
+}
+
 function add(_ref) {
     var feature = _ref.feature,
         name = _ref.name,
@@ -21,7 +33,7 @@ function add(_ref) {
     var constantName = makeConstantName(name);
     var constantStateKeyName = makeConstantStateKeyName(name);
 
-    var reducerTpl = tmpl(prototype, {
+    var reducerTpl = tmpl(prototype.make, {
         reducerName: reducerName,
         reducer: reducer,
         constantName: constantName,
@@ -61,7 +73,7 @@ function remove(_ref2) {
     var reducerName = makeReducerName(name);
     var constantName = makeConstantName(name);
     var constantStateKeyName = makeConstantStateKeyName(name);
-    var reducerTpl = tmpl(prototype, {
+    var reducerTpl = tmpl(prototype.make, {
         reducerName: reducerName,
         reducer: reducer,
         constantName: constantName,
@@ -99,7 +111,9 @@ function makeReducerName(name) {
 }
 
 module.exports = {
+    init: init,
     add: add,
     remove: remove,
-    makeReducerName: makeReducerName
+    makeReducerName: makeReducerName,
+    FILENAME: FILENAME
 };

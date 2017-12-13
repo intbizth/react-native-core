@@ -35,10 +35,6 @@ function add({feature}) {
     refactor.flush();
 }
 
-function makeFeatureFolderName(name) {
-    return _.kebabCase(name);
-}
-
 function remove({feature}) {
     const featureName = makeFeatureFolderName(feature);
     const featureFolder = refactor.getFeatureFolder(featureName);
@@ -56,6 +52,5 @@ function remove({feature}) {
 
 module.exports = {
     add,
-    makeFeatureFolderName,
     remove
 };

@@ -3,7 +3,24 @@
 var _ = require('lodash');
 var refactor = require('../refactor');
 var CONSTANTS = require('../constants');
-var makeConstantStateKeyName = require('./constant').makeConstantStateKeyName;
+var tmpl = require('blueimp-tmpl');
+
+var _require = require('./constant'),
+    makeConstantStateKeyName = _require.makeConstantStateKeyName;
+
+var prototype = require('../prototype/initialState');
+
+var FILENAME = 'initialState.js';
+
+function init(feature) {
+    var targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
+
+    var lines = [];
+    refactor.writeLine(lines, 0, tmpl(prototype.init, {}));
+    refactor.save(targetPath, lines);
+
+    refactor.success(targetPath + ' was created');
+}
 
 function add(_ref) {
     var feature = _ref.feature,
@@ -15,7 +32,7 @@ function add(_ref) {
         return;
     }
 
-    var targetPath = refactor.getReduxFolder(feature) + '/initialState.js';
+    var targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
     var stateKeyName = makeConstantStateKeyName(name);
 
     var lines = refactor.getLines(targetPath);
@@ -42,7 +59,7 @@ function remove(_ref2) {
         name = _ref2.name,
         type = _ref2.type;
 
-    var targetPath = refactor.getReduxFolder(feature) + '/initialState.js';
+    var targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
     var stateKeyName = makeConstantStateKeyName(name);
 
     if ('paginate' === type) {
@@ -65,6 +82,8 @@ function remove(_ref2) {
 }
 
 module.exports = {
+    init: init,
     add: add,
-    remove: remove
+    remove: remove,
+    FILENAME: FILENAME
 };

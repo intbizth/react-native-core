@@ -2,7 +2,7 @@ const _ = require('lodash');
 const refactor = require('../refactor');
 const saga = require('./saga');
 const reducer = require('./reducer');
-const { makeFeatureFolderName } = require('../manager/feature');
+const { makeFeatureFolderName } = require('./feature');
 
 function linkSaga({feature, name, type, withSaga}) {
     const targetPath = refactor.getReduxFolder(feature) + '/' + saga.FILENAME;

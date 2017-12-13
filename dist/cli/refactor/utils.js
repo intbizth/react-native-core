@@ -54,7 +54,7 @@ function getFeatureFolder(feature) {
         return featureFolder;
     }
 
-    featureDir[feature] = featureFolder = true === global.__TEST__ ? projectRoot + 'test/mock/features/' + feature : projectRoot + 'features/' + feature;
+    featureDir[feature] = featureFolder = projectRoot + 'features/' + feature;
     return featureFolder;
 }
 
@@ -94,8 +94,14 @@ function getProjectRoot() {
             lastDir = cwd;
             cwd = joinPath(cwd, '..');
         }
+
+        prjRoot = joinPath(/\/$/.test(prjRoot) ? prjRoot : prjRoot + '/');
+        if (global.__TEST__) {
+            prjRoot = prjRoot + 'test/mock/';
+        }
     }
-    return joinPath(/\/$/.test(prjRoot) ? prjRoot : prjRoot + '/');
+
+    return prjRoot;
 }
 
 module.exports = {

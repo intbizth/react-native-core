@@ -3,10 +3,8 @@
 
 var inquirer = require('inquirer');
 var program = require('commander');
-
-var _require = require('./core'),
-    make = _require.make,
-    remove = _require.remove;
+var actionManager = require('./manager/action');
+var featureManager = require('./manager/feature');
 
 program.version('0.0.1').description('Core management system');
 
@@ -53,7 +51,7 @@ program.command('make').description('Make a request action with saga').action(fu
         }
     }];
 
-    inquirer.prompt(questions).then(make);
+    inquirer.prompt(questions).then(actionManager.make);
 });
 
 program.command('rm').description('Remove a request action with saga').action(function () {
@@ -71,7 +69,27 @@ program.command('rm').description('Remove a request action with saga').action(fu
         message: 'Typing a filename of saga function (no need ".js")'
     }];
 
-    inquirer.prompt(questions).then(remove);
+    inquirer.prompt(questions).then(actionManager.remove);
+});
+
+program.command('make-feature').description('Create a feature').action(function () {
+    var questions = [{
+        type: 'input',
+        name: 'feature',
+        message: "What's feature name?"
+    }];
+
+    inquirer.prompt(questions).then(featureManager.add);
+});
+
+program.command('rm-feature').description('Remove a feature').action(function () {
+    var questions = [{
+        type: 'input',
+        name: 'feature',
+        message: "What's feature name?"
+    }];
+
+    inquirer.prompt(questions).then(featureManager.remove);
 });
 
 program.parse(process.argv);

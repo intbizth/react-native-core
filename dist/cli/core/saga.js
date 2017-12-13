@@ -16,6 +16,14 @@ var _require3 = require('./constant'),
 var CONSTANTS = require('../constants');
 var prototype = require('../prototype/saga');
 
+var FILENAME = 'sagas.js';
+
+function init(feature) {
+    var targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
+    refactor.save(targetPath, [""]);
+    refactor.success(targetPath + ' was created');
+}
+
 function add(_ref) {
     var feature = _ref.feature,
         name = _ref.name,
@@ -149,8 +157,10 @@ function makeSagaName(name, actionType) {
 }
 
 module.exports = {
+    init: init,
     add: add,
     remove: remove,
     removeEmptyFile: removeEmptyFile,
-    makeSagaName: makeSagaName
+    makeSagaName: makeSagaName,
+    FILENAME: FILENAME
 };
