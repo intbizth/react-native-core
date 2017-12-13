@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 const inquirer = require('inquirer');
 const program = require('commander');
-const { make, remove } = require('./core');
+const actionManager = require('./manager/action');
+const featureManager = require('./manager/feature');
 
 program
     .version('0.0.1')
     .description('Core management system')
-
 ;
 
 program
@@ -63,7 +63,7 @@ program
             },
         ];
 
-        inquirer.prompt(questions).then(make);
+        inquirer.prompt(questions).then(actionManager.make);
     })
 ;
 
@@ -89,7 +89,39 @@ program
             }
         ];
 
-        inquirer.prompt(questions).then(remove);
+        inquirer.prompt(questions).then(actionManager.remove);
+    })
+;
+
+program
+    .command('mf')
+    .description('Create a feature')
+    .action(() => {
+        const questions = [
+            {
+                type: 'input',
+                name: 'feature',
+                message: "What's feature name?",
+            }
+        ];
+
+        inquirer.prompt(questions).then(featureManager.add);
+    })
+;
+
+program
+    .command('rf')
+    .description('Remove a feature')
+    .action(() => {
+        const questions = [
+            {
+                type: 'input',
+                name: 'feature',
+                message: "What's feature name?",
+            }
+        ];
+
+        inquirer.prompt(questions).then(featureManager.remove);
     })
 ;
 
