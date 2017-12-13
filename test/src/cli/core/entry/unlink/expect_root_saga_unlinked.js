@@ -1,8 +1,6 @@
 import { all } from 'redux-saga/effects';
-import * as pageSagas from '../features/page/redux/sagas';
 
 const featureSagas = [
-    pageSagas,
 ];
 
 const sagas = featureSagas.reduce((prev, curr) => [
