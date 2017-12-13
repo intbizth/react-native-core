@@ -4,7 +4,7 @@
 
 ## cli todo
 - [ ] Auto order import under eslint/import rule: `import/first`
-- [ ] Create feature `$ make feature`
+- [x] Create feature `$ make-feature`
 - [ ] Create screen `$ make screen`
-- [ ] Change command for create async process from `$ make` to `$ make xxxxx`
+- [x] ~Change command for create async process from `$ make` to `$ make xxxxx`~
 - [x] `initialState.js` remove unused import eg. makeInitialState
