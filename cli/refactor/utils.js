@@ -47,10 +47,10 @@ function getFeatureFolder(feature) {
     }
 
     const projectRoot = getProjectRoot();
-    let featureFolder = `${projectRoot}src/features/${feature}`;
+    let featureFolder = '';
 
-    if (fs.existsSync(featureFolder)) {
-        featureDir[feature] = featureFolder;
+    if (fs.existsSync(`${projectRoot}src/features`)) {
+        featureFolder = featureDir[feature] = `${projectRoot}src/features/${feature}`;
         return featureFolder;
     }
 
@@ -98,7 +98,6 @@ function getProjectRoot() {
         if (global.__TEST__) {
             prjRoot = prjRoot + 'test/mock/';
         }
-
     }
 
     return prjRoot;

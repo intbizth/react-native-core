@@ -47,10 +47,10 @@ function getFeatureFolder(feature) {
     }
 
     var projectRoot = getProjectRoot();
-    var featureFolder = projectRoot + 'src/features/' + feature;
+    var featureFolder = '';
 
-    if (fs.existsSync(featureFolder)) {
-        featureDir[feature] = featureFolder;
+    if (fs.existsSync(projectRoot + 'src/features')) {
+        featureFolder = featureDir[feature] = projectRoot + 'src/features/' + feature;
         return featureFolder;
     }
 
