@@ -4,10 +4,18 @@ const refactor = require('../refactor');
 const CONSTANTS = require('../constants');
 const prototype = require('../prototype/constant');
 
+const FILENAME = 'constants.js';
+
+function init(feature) {
+    const targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
+    refactor.save(targetPath, [""]);
+    refactor.success(`${targetPath} was created`);
+}
+
 function add({feature, name, type, withReducer}) {
     const constName = makeConstantName(name);
     const constCreator = _getFunc(type);
-    const targetPath = refactor.getReduxFolder(feature) + '/constants.js';
+    const targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
     const lines = refactor.getLines(targetPath);
     const i = refactor.lastLineIndex(lines, /^export /);
 
@@ -42,7 +50,7 @@ function add({feature, name, type, withReducer}) {
 function remove({feature, name}) {
     const constName = makeConstantName(name);
     const constStateKeyName = makeConstantStateKeyName(name);
-    const targetPath = refactor.getReduxFolder(feature) + '/constants.js';
+    const targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
     const lines = refactor.getLines(targetPath);
 
     const i = _.findIndex(lines, l => new RegExp(`^export const ${constName} = create`).test(l));
@@ -102,8 +110,10 @@ function makeConstantStateKeyName(name) {
 }
 
 module.exports = {
+    init,
     add,
     remove,
     makeConstantName,
-    makeConstantStateKeyName
+    makeConstantStateKeyName,
+    FILENAME
 };
