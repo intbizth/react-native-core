@@ -7,6 +7,15 @@ const { makeConstantStateKeyName } = require('./constant');
 const CONSTANTS = require('../constants');
 const prototype = require('../prototype/saga');
 
+const FILENAME = 'sagas.js';
+
+function init(feature) {
+    const targetPath = refactor.getReduxFolder(feature) + '/' + FILENAME;
+    refactor.save(targetPath, [""]);
+    refactor.success(`${targetPath} was created`);
+}
+
+
 function add({feature, name, type, withSaga}) {
     const reduxFolder = refactor.getReduxFolder(feature);
 
@@ -133,8 +142,10 @@ function makeSagaName(name, actionType) {
 }
 
 module.exports = {
+    init,
     add,
     remove,
     removeEmptyFile,
-    makeSagaName
+    makeSagaName,
+    FILENAME
 };
