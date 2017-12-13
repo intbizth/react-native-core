@@ -9,6 +9,7 @@ const initialState = require('../core/initialState');
 const reducer = require('../core/reducer');
 const saga = require('../core/saga');
 const selector = require('../core/selector');
+const { makeFeatureFolderName } = require('../core/feature');
 
 
 function add({feature}) {

@@ -12,6 +12,9 @@ var reducer = require('../core/reducer');
 var saga = require('../core/saga');
 var selector = require('../core/selector');
 
+var _require = require('../core/feature'),
+    makeFeatureFolderName = _require.makeFeatureFolderName;
+
 function add(_ref) {
     var feature = _ref.feature;
 
