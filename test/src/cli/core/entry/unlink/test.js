@@ -64,7 +64,7 @@ exports.test = () => {
 
             entry.unlinkFeature(feature);
 
-            const commonFolder = refactor.getProjectRoot() + 'common';
+            const commonFolder = refactor.getCommonFolder();
 
             const rootReducerFileLines = refactor.fileLines[commonFolder + '/rootReducer.js'];
             assert.equal('object', typeof rootReducerFileLines);

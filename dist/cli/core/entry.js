@@ -69,7 +69,7 @@ function unlinkReducer(_ref4) {
 }
 
 function linkFeature(feature) {
-    var commonFolder = refactor.getProjectRoot() + 'common';
+    var commonFolder = refactor.getCommonFolder();
 
     if (!refactor.dirExists(commonFolder)) {
         refactor.info(commonFolder + ' do not exists in your project, In order to link "' + feature + '" to root you have to create rootReducer.js and rootSaga.js under "common" folder and manual link!!');
@@ -90,7 +90,7 @@ function linkFeature(feature) {
 }
 
 function unlinkFeature(feature) {
-    var commonFolder = refactor.getProjectRoot() + 'common';
+    var commonFolder = refactor.getCommonFolder();
 
     if (!refactor.dirExists(commonFolder)) {
         return;

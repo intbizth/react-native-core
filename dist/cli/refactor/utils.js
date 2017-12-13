@@ -58,6 +58,15 @@ function getFeatureFolder(feature) {
     return featureFolder;
 }
 
+function getCommonFolder() {
+    var projectRoot = getProjectRoot();
+    if (fs.existsSync(projectRoot + 'src/common')) {
+        return projectRoot + 'src/common';
+    }
+
+    return projectRoot + '/common';
+}
+
 function getReduxFolder(feature) {
     return getFeatureFolder(feature) + '/redux';
 }
@@ -107,6 +116,7 @@ function getProjectRoot() {
 module.exports = {
     getPkgJson: getPkgJson,
     getProjectRoot: getProjectRoot,
+    getCommonFolder: getCommonFolder,
     getReduxFolder: getReduxFolder,
     getFeatureFolder: getFeatureFolder,
     info: info,
