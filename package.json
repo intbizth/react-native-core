@@ -4,7 +4,7 @@
   "description": "core feature for react native project",
   "main": "index.js",
   "scripts": {
-    "build": "node ./node_modules/babel-cli/bin/babel ./cli -d ./dist/cli",
+    "build": "node ./node_modules/babel-cli/bin/babel ./cli -d ./dist/cli --presets es2015 --plugins transform-object-rest-spread",
     "test": "./node_modules/mocha/bin/mocha"
   },
   "dependencies": {
