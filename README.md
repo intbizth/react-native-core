@@ -1,8 +1,14 @@
 # react-native-core
   A starter react native project.
 
+## CLI Usage
+`$ node node_modules/react-native-core/bin/cli.js --help`
 
-## cli todo
+
+## Testing
+`$ yarn run test`
+
+## CLI TODOs
 - [ ] Auto order import under eslint/import rule: `import/first`
 - [x] Create feature `$ make-feature`
 - [ ] Create screen `$ make screen`
