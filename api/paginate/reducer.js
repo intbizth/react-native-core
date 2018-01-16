@@ -86,6 +86,15 @@ export default (entity, key) => {
                     }
                 };
             }
+            case entity.FAILURE: {
+                return {
+                    ...state,
+                    [key]: {
+                        ...state[key],
+                        isLoading: false
+                    }
+                };
+            }
             default:
                 return state;
         }
