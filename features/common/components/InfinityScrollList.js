@@ -73,6 +73,10 @@ class InfinityScrollList extends React.Component {
     }
 
     __onViewableItemsChanged({viewableItems}) {
+        if (!this._ref) {
+            return;
+        }
+
         const viewableKeys = this.state.viewableKeys;
         viewableItems.map((v) => {
             if (includes(viewableKeys, v.id)) {
