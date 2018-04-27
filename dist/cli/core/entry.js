@@ -76,12 +76,12 @@ function linkFeature(feature) {
         return;
     }
 
-    var reducerEntryName = feature + 'Reducer';
+    var reducerEntryName = _.camelCase(feature) + 'Reducer';
     refactor.updateFile(commonFolder + '/rootReducer.js', function (ast) {
         return [].concat(refactor.addImportFrom(ast, '../features/' + makeFeatureFolderName(feature) + '/redux/reducer', reducerEntryName), refactor.addObjectProperty(ast, 'featureReducers', _.camelCase(feature), reducerEntryName));
     });
 
-    var sagaEntryName = feature + 'Sagas';
+    var sagaEntryName = _.camelCase(feature) + 'Sagas';
     refactor.updateFile(commonFolder + '/rootSaga.js', function (ast) {
         return [].concat(refactor.addImportFrom(ast, '../features/' + makeFeatureFolderName(feature) + '/redux/sagas', '* as ' + sagaEntryName), refactor.addToArray(ast, 'featureSagas', sagaEntryName));
     });

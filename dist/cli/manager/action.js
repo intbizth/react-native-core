@@ -41,8 +41,6 @@ function make(answers) {
         }
     }
 
-    refactor.flush();
-
     refactor.info('Complete.. ;))');
 }
 
@@ -75,9 +73,9 @@ function remove(answers) {
         entry.unlinkReducer(answers);
     }
 
-    refactor.flush();
-
     refactor.info('Complete.. ;))');
 }
 
-module.exports = { make: make, remove: remove };
+module.exports = { make: make, remove: remove, flush: function flush() {
+        return refactor.flush();
+    } };

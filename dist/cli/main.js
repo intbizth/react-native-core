@@ -51,7 +51,10 @@ program.command('make').description('Make a request action with saga').action(fu
         }
     }];
 
-    inquirer.prompt(questions).then(actionManager.make);
+    inquirer.prompt(questions).then(function (args) {
+        actionManager.make(args);
+        actionManager.flush();
+    });
 });
 
 program.command('rm').description('Remove a request action with saga').action(function () {
@@ -69,7 +72,10 @@ program.command('rm').description('Remove a request action with saga').action(fu
         message: 'Typing a filename of saga function (no need ".js")'
     }];
 
-    inquirer.prompt(questions).then(actionManager.remove);
+    inquirer.prompt(questions).then(function (args) {
+        actionManager.remove(args);
+        actionManager.flush();
+    });
 });
 
 program.command('make-feature').description('Create a feature').action(function () {
@@ -79,7 +85,10 @@ program.command('make-feature').description('Create a feature').action(function 
         message: "What's feature name?"
     }];
 
-    inquirer.prompt(questions).then(featureManager.add);
+    inquirer.prompt(questions).then(function (args) {
+        featureManager.add(args);
+        featureManager.flush();
+    });
 });
 
 program.command('rm-feature').description('Remove a feature').action(function () {
@@ -89,7 +98,10 @@ program.command('rm-feature').description('Remove a feature').action(function ()
         message: "What's feature name?"
     }];
 
-    inquirer.prompt(questions).then(featureManager.remove);
+    inquirer.prompt(questions).then(function (args) {
+        featureManager.remove(args);
+        featureManager.flush();
+    });
 });
 
 program.parse(process.argv);
