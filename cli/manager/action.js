@@ -50,8 +50,6 @@ function make(answers) {
         }
     }
 
-    refactor.flush();
-
     refactor.info('Complete.. ;))');
 }
 
@@ -95,9 +93,7 @@ function remove(answers) {
         entry.unlinkReducer(answers);
     }
 
-    refactor.flush();
-
     refactor.info('Complete.. ;))');
 }
 
-module.exports = { make, remove };
+module.exports = { make, remove, flush: () => refactor.flush() };

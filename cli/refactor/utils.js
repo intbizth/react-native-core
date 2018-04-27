@@ -64,7 +64,7 @@ function getCommonFolder() {
         return `${projectRoot}src/common`;
     }
 
-    return `${projectRoot}/common`;
+    return `${projectRoot}common`;
 }
 
 function getReduxFolder(feature) {

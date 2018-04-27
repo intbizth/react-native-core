@@ -17,23 +17,21 @@ function add({feature}) {
     const featureFolder = refactor.getFeatureFolder(featureName);
 
     if (fs.existsSync(featureFolder)) {
-        refactor.error(`Feature name "${feature}" exists in your project.`);
+        refactor.error(`Feature name "${featureName}" exists in your project.`);
     }
 
     refactor.mkdir(featureFolder);
 
-    entry.initFolder(feature);
-    action.init(feature);
-    constant.init(feature);
-    initialState.init(feature);
-    reducer.init(feature);
-    router.init(feature);
-    saga.init(feature);
-    selector.init(feature);
+    entry.initFolder(featureName);
+    action.init(featureName);
+    constant.init(featureName);
+    initialState.init(featureName);
+    reducer.init(featureName);
+    router.init(featureName);
+    saga.init(featureName);
+    selector.init(featureName);
 
-    entry.linkFeature(feature);
-
-    refactor.flush();
+    entry.linkFeature(featureName);
 }
 
 function remove({feature}) {
@@ -41,17 +39,18 @@ function remove({feature}) {
     const featureFolder = refactor.getFeatureFolder(featureName);
 
     if (!fs.existsSync(featureFolder)) {
-        refactor.error(`Feature name "${feature}" do not exists in your project.`);
+        refactor.error(`Feature name "${featureName}" do not exists in your project.`);
     }
 
-    entry.unlinkFeature(feature);
+    entry.unlinkFeature(featureName);
 
     refactor.del(featureFolder);
-
-    refactor.flush();
 }
 
 module.exports = {
     add,
-    remove
+    remove,
+    flush: () => {
+        refactor.flush();
+    }
 };

@@ -11,5 +11,8 @@ exports.test = () => {
         describe('Core function', () => {
             require('./core').test();
         });
+        describe('Manager function', () => {
+            require('./manager').test();
+        });
     });
 };

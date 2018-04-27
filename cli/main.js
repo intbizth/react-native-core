@@ -63,7 +63,10 @@ program
             },
         ];
 
-        inquirer.prompt(questions).then(actionManager.make);
+        inquirer.prompt(questions).then((args) => {
+            actionManager.make(args);
+            actionManager.flush();
+        });
     })
 ;
 
@@ -89,7 +92,10 @@ program
             }
         ];
 
-        inquirer.prompt(questions).then(actionManager.remove);
+        inquirer.prompt(questions).then((args) => {
+            actionManager.remove(args);
+            actionManager.flush();
+        });
     })
 ;
 
@@ -105,7 +111,10 @@ program
             }
         ];
 
-        inquirer.prompt(questions).then(featureManager.add);
+        inquirer.prompt(questions).then((args) => {
+            featureManager.add(args);
+            featureManager.flush();
+        });
     })
 ;
 
@@ -121,7 +130,10 @@ program
             }
         ];
 
-        inquirer.prompt(questions).then(featureManager.remove);
+        inquirer.prompt(questions).then((args) => {
+            featureManager.remove(args);
+            featureManager.flush();
+        });
     })
 ;
 
