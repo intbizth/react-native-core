@@ -1,4 +1,4 @@
-import { AbstractPaginateAction } from 'react-native-core/api/submit/action';
+import { AbstractPaginateAction } from 'react-native-core/api/paginate/action';
 import { FETCH_PAGES } from './constants';
 
 

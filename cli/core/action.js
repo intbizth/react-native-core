@@ -31,7 +31,7 @@ function add({feature, name, type}) {
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, ast => [].concat(
-        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/submit/action`, '', [actionCreator]),
+        refactor.addImportFrom(ast, `${CONSTANTS.PACKAGE_NAME}/api/${type}/action`, '', [actionCreator]),
         refactor.addImportFrom(ast, `./constants`, '', [constantName])
     ));
 
