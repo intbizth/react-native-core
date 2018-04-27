@@ -2,8 +2,7 @@
   A starter react native project.
 
 ## CLI Usage
-`$ node node_modules/react-native-core/bin/cli.js --help`
-
+`$ node node_modules/react-native-core/bin/cli --help`
 
 ## Testing
 `$ yarn run test`
