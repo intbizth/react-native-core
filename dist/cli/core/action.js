@@ -37,7 +37,7 @@ function add(_ref) {
     refactor.save(targetPath, lines);
 
     refactor.updateFile(targetPath, function (ast) {
-        return [].concat(refactor.addImportFrom(ast, CONSTANTS.PACKAGE_NAME + '/api/submit/action', '', [actionCreator]), refactor.addImportFrom(ast, './constants', '', [constantName]));
+        return [].concat(refactor.addImportFrom(ast, CONSTANTS.PACKAGE_NAME + '/api/' + type + '/action', '', [actionCreator]), refactor.addImportFrom(ast, './constants', '', [constantName]));
     });
 
     refactor.success('Action: "' + actionName + '" created in "' + targetPath + '"');
