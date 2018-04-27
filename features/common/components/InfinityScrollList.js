@@ -96,7 +96,7 @@ class InfinityScrollList extends React.Component {
             <List ref={(ref) => this._ref = ref}>
                 <FlatList
                     onEndReachedThreshold={0.8}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.id.toString()}
                     {...this.props}
                     onEndReached={this._handleLoadMore}
                     extraData={this.state}
