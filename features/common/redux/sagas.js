@@ -27,17 +27,21 @@ export function* watchRequestApiFailure(text = {server: 'Something wrong! during
 
             // eslint-disable-next-line no-undef
             if (!__DEV__) {
-                return (!!errors.response) ? text.server || text : text.client || text
+                return (!!errors.response)
+                    ? text.server || text
+                    : text.client || text
             }
 
             // case can request to server but server error
             if (errors.response) {
                 if (errors.response.data) {
-                    const { error, error_description } = errors.response.data;
-                    if (error) text = error;
-                    if (error_description) text += '\n' + error_description;
+                    var errorText = '';
+                    const { error, error_description, message } = errors.response.data;
+                    if (error) errorText = error;
+                    if (message) errorText += message;
+                    if (error_description) errorText += '\n' + error_description;
 
-                    return text;
+                    return '' !== errorText ? errorText : text.server || text;
                 }
             }
 
