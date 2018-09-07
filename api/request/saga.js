@@ -1,10 +1,14 @@
 import { NavigationActions } from 'react-navigation';
 import extend from 'lodash/extend';
 import { call, put, take, fork } from 'redux-saga/effects';
+import ref from '../../utils/ref';
 import {
     showLoadingOverlayAndDisableBack,
     showLoadingOverlay,
-    hideLoadingOverlay
+    hideLoadingOverlay,
+    apiAccessTokenExpired,
+    apiAccessTokenNotFound
+
 } from '../../features/common/redux/actions';
 
 export const doRequest = function*(entityActions, apiFn, userOptions = {}) {
@@ -50,10 +54,39 @@ const callApi = function*(entityActions, apiFn, options = {}) {
         apiFunction = apiFn.apiFunction;
         args = apiFn.args;
     }
-
+    
     try {
         res = yield call(apiFunction, ...args);
     } catch (err) {
+        console.log('ERROR!!!!! =>>', err.request)
+        const isTokenError = ref(err, 'response.status') === 401;
+
+        if (isTokenError) {
+            switch (ref(err, 'response.data.error_description')) {
+                case 'The access token provided is invalid.':
+                    yield put(apiAccessTokenNotFound({
+                        from: entityActions.request()
+                    }));
+                    yield put(entityActions.dismiss());
+
+                    return;
+                case 'OAuth2 authentication required':
+                    yield put(apiAccessTokenNotFound({
+                        from: entityActions.request()
+                    }));
+                    yield put(entityActions.dismiss());
+
+                    return;
+                case 'The access token provided has expired.':
+                    yield put(apiAccessTokenExpired({
+                        from: entityActions.request()
+                    }));
+                    yield take('ATTEMPT_RECALL_API');
+                    yield call(callApi, entityActions, apiFn, options);
+                    return;
+            }
+        }
+
         if (options.showLoading) {
             yield put(hideLoadingOverlay());
         }
