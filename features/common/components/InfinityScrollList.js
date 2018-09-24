@@ -15,45 +15,23 @@ class InfinityScrollList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            notAllowLoadingMore: false, // IOS Buggy. see: https://github.com/facebook/react-native/issues/14015
             viewableKeys: []
         };
 
-        this._handleLoadMore = this._handleLoadMore.bind(this);
         this._onViewableItemsChanged = this._onViewableItemsChanged.bind(this);
         this._renderItem = this._renderItem.bind(this);
+        // IOS Buggy. see: https://github.com/facebook/react-native/issues/14015
+        this._handleLoadMore = debounce(this._handleLoadMore.bind(this), 700);
 
         // https://stackoverflow.com/questions/24306290/lodash-debounce-not-working-in-anonymous-function
         this.__onViewableItemsChanged = debounce(this.__onViewableItemsChanged.bind(this), 500);
-        this._allowLoadingMore = debounce(this._allowLoadingMore.bind(this), 1000);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.loadingMore) {
-            return;
-        }
-
-        this._allowLoadingMore();
-    }
-
-    _allowLoadingMore() {
-        if (!this._ref) {
-            return;
-        }
-
-        this.setState({
-            notAllowLoadingMore: false
-        })
     }
 
     _handleLoadMore() {
-        if (this.state.notAllowLoadingMore || this.props.refreshing) {
+        if (this.props.loadingMore || this.props.refreshing) {
             return;
         }
 
-        this.setState({
-            notAllowLoadingMore: true
-        });
         this.props.onLoadMore();
     }
 
