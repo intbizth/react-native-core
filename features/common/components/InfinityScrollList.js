@@ -28,7 +28,7 @@ class InfinityScrollList extends React.Component {
     }
 
     _handleLoadMore() {
-        if (this.props.loadingMore || this.props.refreshing) {
+        if (this.props.loadingMore || this.props.refreshing || !this.canAction) {
             return;
         }
 
@@ -75,6 +75,18 @@ class InfinityScrollList extends React.Component {
                 <FlatList
                     onEndReachedThreshold={0.8}
                     keyExtractor={(item) => item.id.toString()}
+                    onScrollBeginDrag={() => {
+                        this.canAction = true;
+                    }}
+                    onScrollEndDrag={() => {
+                        this.canAction = false;
+                    }}
+                    onMomentumScrollBegin={() => {
+                        this.canAction = true;
+                    }}
+                    onMomentumScrollEnd={() => {
+                        this.canAction = false;
+                    }}
                     {...this.props}
                     onEndReached={this._handleLoadMore}
                     extraData={this.state}
