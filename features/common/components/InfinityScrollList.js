@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FlatList } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import { Spinner, List } from "native-base";
 import includes from "lodash/includes";
 import debounce from "lodash/debounce";
@@ -71,7 +71,7 @@ class InfinityScrollList extends React.Component {
 
     render() {
         return (
-            <List ref={(ref) => this._ref = ref}>
+            <List ref={(ref) => this._ref = ref} style={styles.list}>
                 <FlatList
                     onEndReachedThreshold={0.8}
                     keyExtractor={(item) => item.id.toString()}
@@ -86,5 +86,11 @@ class InfinityScrollList extends React.Component {
         )
     }
 }
+
+const styles = StyleSheet.create({
+    list: {
+        flex: 1
+    }
+});
 
 export default InfinityScrollList;
