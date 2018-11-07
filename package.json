@@ -4,8 +4,6 @@
   "description": "core feature for react native project",
   "main": "index.js",
   "dependencies": {
-    "react": ">=16.0.0",
-    "react-native": ">=0.50.3",
     "native-base": ">=2.3.3",
     "prop-types": ">=15.6.0",
     "react-native-i18n": ">=2.0.9",
@@ -13,6 +11,8 @@
     "redux-saga": ">=0.16.0"
   },
   "devDependencies": {
+    "react": ">=16.0.0",
+    "react-native": ">=0.50.3",
     "eslint": "^4.9.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.8.0",
