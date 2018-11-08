@@ -1,4 +1,3 @@
-import { Toast } from 'native-base';
 import { channel } from 'redux-saga';
 import { take, put, takeLatest } from 'redux-saga/effects';
 
@@ -16,7 +15,7 @@ export function* watchAlertChannel() {
  *
  * text object shape : { server: 'some text on server error', client: 'some text on client error' }
  */
-export function* watchRequestApiFailure(text = {server: 'Something wrong! during request to server.', client: 'Please check your network connection and try again'}) {
+export function* watchRequestApiFailure(Toast, text = {server: 'Something wrong! during request to server.', client: 'Please check your network connection and try again'}) {
     yield takeLatest(action => /^(.*)_FAILURE$/.test(action.type), function ({ errors, __meta__ }) {
         if (__meta__.disabledDisplayGlobalError) {
             return;
